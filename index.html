@@ -1,994 +1,838 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Brain Pro | Advanced Crypto Terminal</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        mono: ['JetBrains Mono', 'monospace'],
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                    colors: {
-                        terminal: {
-                            bg: '#0a0e1a',
-                            panel: '#111827',
-                            border: '#1f2937',
-                            accent: '#00d4ff',
-                            success: '#00ff88',
-                            danger: '#ff4757',
-                            warning: '#ffa502',
-                            purple: '#8b5cf6'
-                        }
-                    },
-                    animation: {
-                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'flash-green': 'flashGreen 0.5s ease-in-out',
-                        'flash-red': 'flashRed 0.5s ease-in-out',
-                    },
-                    keyframes: {
-                        flashGreen: {
-                            '0%, 100%': { backgroundColor: 'transparent' },
-                            '50%': { backgroundColor: 'rgba(0, 255, 136, 0.2)' },
-                        },
-                        flashRed: {
-                            '0%, 100%': { backgroundColor: 'transparent' },
-                            '50%': { backgroundColor: 'rgba(255, 71, 87, 0.2)' },
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        body {
-            background-color: #0a0e1a;
-            color: #e5e7eb;
-            overflow: hidden;
-        }
-        .glass-panel {
-            background: rgba(17, 24, 39, 0.7);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.36);
-        }
-        .neon-border {
-            box-shadow: 0 0 10px rgba(0, 212, 255, 0.3), inset 0 0 10px rgba(0, 212, 255, 0.1);
-        }
-        .grid-layout {
-            display: grid;
-            grid-template-columns: 280px 1fr 320px;
-            grid-template-rows: 60px 1fr 220px;
-            gap: 1px;
-            height: 100vh;
-            background: #0f172a;
-        }
-        .chart-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1px;
-            height: 100%;
-        }
-        .scrollbar-hide::-webkit-scrollbar {
-            display: none;
-        }
-        .scrollbar-hide {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-        .price-up { color: #00ff88; }
-        .price-down { color: #ff4757; }
-        .order-book-row:hover {
-            background: rgba(0, 212, 255, 0.1);
-        }
-        .terminal-input {
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid #374151;
-            color: #00d4ff;
-            font-family: 'JetBrains Mono', monospace;
-        }
-        .terminal-input:focus {
-            outline: none;
-            border-color: #00d4ff;
-            box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
-        }
-        canvas {
-            image-rendering: pixelated;
-        }
-        .strategy-signal {
-            position: absolute;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            box-shadow: 0 0 10px currentColor;
-        }
-        .signal-buy { background: #00ff88; color: #00ff88; }
-        .signal-sell { background: #ff4757; color: #ff4757; }
-        .heatmap-cell {
-            transition: all 0.3s ease;
-        }
-        .heatmap-cell:hover {
-            transform: scale(1.05);
-            z-index: 10;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Brain — Command Center | Alpha Weapons Active</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zalando+Sans+Expanded:ital,wght@0,200..900;1,200..900&family=Zalando+Sans:ital,wght@0,200..900;1,200..900&family=Zalando+Sans+Condensed:ital,wght@0,200..900;1,200..900&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --base: #161b2c;
+  --base-deep: #111520;
+  --card: #1e2438;
+  --card-top: #242c44;
+  --elevated: #2a3350;
+  --elevated-top: #313b5c;
+
+  --cyan: #4dc8ff;
+  --cyan-soft: #6ad4ff;
+  --cyan-dim: rgba(77,200,255,0.10);
+  --cyan-mid: rgba(77,200,255,0.18);
+  --cyan-glow: 0 0 20px rgba(77,200,255,0.10);
+  --blue: #6688f0;
+  --blue-dim: rgba(102,136,240,0.10);
+  --indigo: #7578f5;
+  --purple: #918af5;
+  --purple-dim: rgba(145,138,245,0.10);
+
+  --green: #50e0aa;
+  --green-dim: rgba(80,224,170,0.10);
+  --red: #f57070;
+  --red-dim: rgba(245,112,112,0.10);
+  --amber: #f5c44e;
+  --amber-dim: rgba(245,196,78,0.10);
+
+  --t1: #eaecf5;
+  --t2: #7d86a0;
+  --t3: #4e5772;
+
+  --sh-d: rgba(6,8,20,0.45);
+  --sh-l: rgba(255,255,255,0.025);
+  --sh-card: 5px 5px 14px var(--sh-d), -2px -2px 8px var(--sh-l);
+  --sh-raised: 3px 3px 10px var(--sh-d), -1px -1px 6px var(--sh-l);
+  --sh-inset: inset 2px 2px 6px var(--sh-d), inset -1px -1px 4px var(--sh-l);
+  --sh-btn: 3px 3px 8px var(--sh-d), -1px -1px 5px var(--sh-l);
+  --sh-glow: var(--sh-card), 0 0 30px rgba(77,200,255,0.04);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--base);color:var(--t1);font-family:'Zalando Sans',sans-serif;min-height:100vh;overflow-x:hidden;font-weight:300;-webkit-font-smoothing:antialiased;}
+::selection{background:var(--cyan-mid);color:#fff;}
+
+.shell{display:flex;min-height:100vh;}
+
+.sb{width:230px;background:var(--base-deep);padding:22px 14px;display:flex;flex-direction:column;gap:2px;position:fixed;top:0;left:0;bottom:0;z-index:50;border-right:1px solid rgba(77,200,255,0.04);}
+.sb-brand{display:flex;align-items:center;gap:11px;padding:6px 10px 24px;margin-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.05);}
+.sb-ico{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,var(--cyan),var(--blue),var(--indigo));box-shadow:var(--sh-btn),0 0 24px rgba(77,200,255,0.1);display:flex;align-items:center;justify-content:center;font-family:'Zalando Sans Expanded';font-weight:800;font-size:17px;color:var(--base-deep);letter-spacing:-0.5px;}
+.sb-name{font-family:'Zalando Sans Expanded';font-weight:200;font-size:17px;letter-spacing:1px;color:var(--t1);}
+.sb-sub{font-family:'Zalando Sans Condensed';font-size:8.5px;color:var(--t3);text-transform:uppercase;letter-spacing:2.5px;font-weight:400;margin-top:2px;}
+
+.nv-label{font-family:'Zalando Sans Condensed';font-size:8.5px;text-transform:uppercase;letter-spacing:2.5px;color:var(--t3);padding:20px 12px 7px;font-weight:400;}
+.nv{display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:12px;font-size:13px;color:var(--t2);font-weight:300;cursor:pointer;transition:all 0.2s;text-decoration:none;}
+.nv:hover{color:var(--t1);background:rgba(255,255,255,0.03);}
+.nv.on{color:var(--cyan);font-weight:400;background:linear-gradient(135deg,rgba(77,200,255,0.06),rgba(102,136,240,0.03));box-shadow:var(--sh-card),inset 0 0 0 1px rgba(77,200,255,0.06);}
+.nv svg{width:17px;height:17px;opacity:0.35;flex-shrink:0;stroke-width:1.5;}
+.nv.on svg{opacity:0.9;stroke:var(--cyan);}
+.nv:hover svg{opacity:0.6;}
+
+.sb-ft{margin-top:auto;padding:14px 10px;border-top:1px solid rgba(255,255,255,0.05);display:flex;gap:6px;flex-wrap:wrap;}
+.cn{display:flex;align-items:center;gap:4px;font-size:9.5px;color:var(--t2);font-family:'JetBrains Mono';font-weight:400;padding:4px 10px;border-radius:8px;background:var(--card);box-shadow:var(--sh-raised);}
+.cn-d{width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 6px rgba(80,224,170,0.4);}
+
+.mn{flex:1;margin-left:230px;display:flex;flex-direction:column;}
+
+.tb{height:54px;background:var(--base-deep);display:flex;align-items:center;padding:0 28px;gap:18px;position:sticky;top:0;z-index:40;border-bottom:1px solid rgba(77,200,255,0.04);}
+.tb-live{display:flex;align-items:center;gap:7px;font-family:'JetBrains Mono';font-size:10.5px;font-weight:500;color:var(--cyan);background:linear-gradient(135deg,rgba(77,200,255,0.08),rgba(102,136,240,0.04));padding:5px 14px;border-radius:20px;box-shadow:var(--sh-btn),0 0 16px rgba(77,200,255,0.06);border:1px solid rgba(77,200,255,0.06);}
+.tb-dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:pulse 2.5s ease-in-out infinite;box-shadow:0 0 8px rgba(77,200,255,0.5);}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 8px rgba(77,200,255,0.5);}50%{opacity:0.35;box-shadow:0 0 2px rgba(77,200,255,0.2);}}
+
+.tk{display:flex;gap:22px;font-family:'JetBrains Mono';font-size:11px;color:var(--t2);font-weight:400;}
+.tk-l{font-family:'Zalando Sans Condensed';font-size:8.5px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-right:4px;font-weight:400;}
+.tk-v{color:var(--t1);font-weight:500;}
+.tk-n{color:var(--red);}
+.tk-p{color:var(--cyan);}
+
+.tb-r{margin-left:auto;display:flex;gap:8px;align-items:center;}
+.tb-b{font-family:'Zalando Sans';font-size:11px;font-weight:300;padding:6px 14px;border-radius:10px;border:none;background:linear-gradient(145deg,var(--elevated),var(--card));color:var(--t2);cursor:pointer;box-shadow:var(--sh-btn);transition:all 0.15s;}
+.tb-b:hover{color:var(--t1);box-shadow:5px 5px 12px var(--sh-d),-2px -2px 8px var(--sh-l);}
+.tb-b:active{box-shadow:var(--sh-inset);}
+.tb-b.lk{color:var(--red);background:linear-gradient(145deg,rgba(245,112,112,0.06),rgba(245,112,112,0.02));border:1px solid rgba(245,112,112,0.08);}
+.tb-b.md{color:var(--cyan);background:linear-gradient(145deg,rgba(77,200,255,0.06),rgba(77,200,255,0.02));border:1px solid rgba(77,200,255,0.06);}
+
+.pg{padding:28px;flex:1;}
+.pg-t{font-family:'Zalando Sans Expanded';font-size:34px;font-weight:200;letter-spacing:1.5px;margin-bottom:3px;color:var(--t1);}
+.pg-s{font-size:13px;color:var(--t3);margin-bottom:28px;font-weight:300;}
+
+.bt{display:grid;grid-template-columns:repeat(12,1fr);gap:16px;}
+
+.cd{background:linear-gradient(165deg,var(--card-top) 0%,var(--card) 100%);border-radius:20px;padding:22px;position:relative;overflow:hidden;box-shadow:var(--sh-glow);border:1px solid rgba(77,200,255,0.04);transition:box-shadow 0.3s,border-color 0.3s;}
+.cd::before{content:'';position:absolute;top:0;left:20px;right:20px;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.05),transparent);}
+.cd:hover{box-shadow:7px 7px 20px var(--sh-d),-3px -3px 12px var(--sh-l),0 0 35px rgba(77,200,255,0.04);border-color:rgba(77,200,255,0.05);}
+
+.c-l{font-family:'Zalando Sans Condensed';font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--t3);font-weight:400;margin-bottom:8px;}
+.c-v{font-family:'JetBrains Mono';font-weight:600;line-height:1.1;letter-spacing:-0.5px;}
+.c-s{font-size:11px;color:var(--t3);margin-top:6px;font-weight:300;}
+
+.ar{width:42px;height:42px;border-radius:50%;background:linear-gradient(145deg,var(--elevated-top),var(--elevated));box-shadow:var(--sh-btn);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;flex-shrink:0;border:1px solid rgba(255,255,255,0.03);}
+.ar:hover{box-shadow:5px 5px 14px var(--sh-d),-2px -2px 8px var(--sh-l);transform:scale(1.06);border-color:rgba(77,200,255,0.06);}
+.ar:active{box-shadow:var(--sh-inset);transform:scale(0.96);}
+.ar svg{width:16px;height:16px;}
+
+.ar.glow{background:linear-gradient(135deg,var(--cyan),var(--blue));box-shadow:var(--sh-btn),0 0 20px rgba(77,200,255,0.15);border:none;}
+.ar.glow svg{stroke:var(--base-deep);stroke-width:2.5;}
+.ar.glow:hover{box-shadow:5px 5px 14px var(--sh-d),-2px -2px 8px var(--sh-l),0 0 28px rgba(77,200,255,0.2);}
+
+.ic{width:38px;height:38px;border-radius:12px;background:linear-gradient(145deg,var(--elevated-top),var(--elevated));box-shadow:var(--sh-raised),inset 0 1px 0 rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid rgba(255,255,255,0.03);}
+.ic svg{width:16px;height:16px;}
+.ic.cy{background:linear-gradient(145deg,rgba(77,200,255,0.12),rgba(77,200,255,0.05));border-color:rgba(77,200,255,0.08);box-shadow:var(--sh-raised),inset 0 0 12px rgba(77,200,255,0.04);}
+.ic.gn{background:linear-gradient(145deg,rgba(80,224,170,0.12),rgba(80,224,170,0.05));border-color:rgba(80,224,170,0.08);box-shadow:var(--sh-raised),inset 0 0 12px rgba(80,224,170,0.04);}
+.ic.purple{background:linear-gradient(145deg,rgba(145,138,245,0.12),rgba(145,138,245,0.05));border-color:rgba(145,138,245,0.08);box-shadow:var(--sh-raised),inset 0 0 12px rgba(145,138,245,0.04);}
+.ic.amber{background:linear-gradient(145deg,rgba(245,196,78,0.12),rgba(245,196,78,0.05));border-color:rgba(245,196,78,0.08);box-shadow:var(--sh-raised),inset 0 0 12px rgba(245,196,78,0.04);}
+
+.hero{grid-column:span 5;padding:28px 30px;background:linear-gradient(155deg,#222c4a 0%,#1b2440 50%,#182036 100%);box-shadow:var(--sh-glow),inset 0 0 80px rgba(77,200,255,0.015);}
+.hero .c-v{font-size:46px;letter-spacing:-2.5px;color:var(--t1);}
+.hero .pnl{display:flex;gap:10px;margin-top:14px;}
+
+.pnl-b{font-family:'JetBrains Mono';font-size:11.5px;font-weight:500;padding:6px 14px;border-radius:10px;box-shadow:var(--sh-raised);border:1px solid transparent;}
+.pnl-p{background:var(--green-dim);color:var(--green);border-color:rgba(80,224,170,0.08);}
+.pnl-n{background:var(--red-dim);color:var(--red);border-color:rgba(245,112,112,0.08);}
+
+.hero .mt{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:22px;padding-top:18px;border-top:1px solid rgba(255,255,255,0.025);}
+.mt-l{font-family:'Zalando Sans Condensed';font-size:8.5px;text-transform:uppercase;letter-spacing:2px;color:var(--t3);font-weight:400;margin-bottom:4px;}
+.mt-v{font-family:'JetBrains Mono';font-size:15px;font-weight:500;letter-spacing:-0.3px;}
+
+.kpis{grid-column:span 7;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;background:none!important;box-shadow:none!important;padding:0!important;border:none!important;border-radius:0!important;}
+.kpis::before{display:none!important;}
+.kpis:hover{box-shadow:none!important;border-color:transparent!important;}
+
+.kp{background:linear-gradient(165deg,var(--card-top),var(--card));border-radius:20px;padding:20px;box-shadow:var(--sh-glow);display:flex;flex-direction:column;min-height:160px;position:relative;overflow:hidden;border:1px solid rgba(77,200,255,0.04);transition:all 0.3s;}
+.kp::before{content:'';position:absolute;top:0;left:16px;right:16px;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.05),transparent);}
+.kp:hover{border-color:rgba(77,200,255,0.06);}
+.kp-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+
+.spark{display:flex;align-items:flex-end;gap:2px;height:28px;margin-top:auto;padding-top:10px;}
+.sp-b{flex:1;border-radius:2px 2px 0 0;min-width:3px;transition:height 0.3s;}
+
+/* ALPHA WEAPONS SECTION */
+.alpha-section{grid-column:span 12;margin-top:8px;}
+.alpha-header{font-family:'Zalando Sans Expanded';font-size:18px;font-weight:200;letter-spacing:1px;color:var(--cyan);margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+.alpha-header::before{content:'';display:inline-block;width:8px;height:8px;background:var(--cyan);border-radius:50%;box-shadow:0 0 10px var(--cyan);animation:pulse 2s infinite;}
+.alpha-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+
+.weapon-card{background:linear-gradient(165deg,var(--card-top),var(--card));border-radius:20px;padding:20px;box-shadow:var(--sh-glow);border:1px solid rgba(77,200,255,0.04);position:relative;overflow:hidden;}
+.weapon-card::before{content:'';position:absolute;top:0;left:16px;right:16px;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.05),transparent);}
+.weapon-card.shadow{border-color:rgba(245,112,112,0.1);background:linear-gradient(165deg,rgba(245,112,112,0.05),var(--card));}
+.weapon-card.gamma{border-color:rgba(145,138,245,0.1);background:linear-gradient(165deg,rgba(145,138,245,0.05),var(--card));}
+.weapon-card.toxic{border-color:rgba(245,196,78,0.1);background:linear-gradient(165deg,rgba(245,196,78,0.05),var(--card));}
+
+.weapon-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.weapon-title{font-family:'Zalando Sans Expanded';font-size:14px;font-weight:200;letter-spacing:0.5px;}
+.weapon-status{font-size:9px;padding:3px 10px;border-radius:20px;font-weight:500;text-transform:uppercase;letter-spacing:1px;}
+.weapon-status.active{background:var(--green-dim);color:var(--green);border:1px solid rgba(80,224,170,0.1);}
+.weapon-status.alert{background:var(--red-dim);color:var(--red);border:1px solid rgba(245,112,112,0.1);}
+.weapon-status.warning{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,196,78,0.1);}
+
+.weapon-metric{font-family:'JetBrains Mono';font-size:28px;font-weight:600;margin-bottom:4px;}
+.weapon-sub{font-size:11px;color:var(--t3);margin-bottom:16px;}
+
+.opportunity-list{display:flex;flex-direction:column;gap:8px;}
+.opp-item{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--elevated);border-radius:10px;border:1px solid rgba(255,255,255,0.03);box-shadow:var(--sh-inset);}
+.opp-symbol{font-family:'JetBrains Mono';font-weight:600;font-size:13px;}
+.opp-badge{font-size:9px;padding:2px 8px;border-radius:6px;font-weight:500;}
+.opp-badge.high{background:var(--red-dim);color:var(--red);}
+.opp-badge.medium{background:var(--amber-dim);color:var(--amber);}
+.opp-badge.low{background:var(--green-dim);color:var(--green);}
+.opp-value{font-family:'JetBrains Mono';font-size:12px;color:var(--cyan);}
+
+.ch-cd{grid-column:span 8;min-height:370px;display:flex;flex-direction:column;}
+.ch-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+.ch-left{display:flex;align-items:center;gap:12px;}
+.ch-val{font-family:'JetBrains Mono';font-size:26px;font-weight:600;color:var(--cyan);letter-spacing:-0.8px;}
+.ch-val span{font-size:13px;color:var(--t3);font-weight:400;letter-spacing:0;}
+
+.ch-tabs{display:flex;gap:2px;background:var(--elevated);border-radius:12px;padding:3px;box-shadow:var(--sh-inset);border:1px solid rgba(255,255,255,0.03);}
+.ct{font-family:'Zalando Sans';font-size:11px;font-weight:300;padding:7px 15px;border-radius:10px;border:none;background:transparent;color:var(--t3);cursor:pointer;transition:all 0.2s;}
+.ct:hover{color:var(--t2);}
+.ct.on{background:linear-gradient(145deg,var(--card-top),var(--card));color:var(--t1);box-shadow:var(--sh-raised);border:1px solid rgba(255,255,255,0.03);}
+
+.ch-area{flex:1;position:relative;border-radius:14px;overflow:hidden;min-height:240px;}
+
+.sys{grid-column:span 4;display:flex;flex-direction:column;gap:14px;background:none!important;box-shadow:none!important;padding:0!important;border:none!important;border-radius:0!important;}
+.sys::before{display:none!important;}
+.sys:hover{box-shadow:none!important;border-color:transparent!important;}
+
+.sy{background:linear-gradient(165deg,var(--card-top),var(--card));border-radius:20px;padding:20px;box-shadow:var(--sh-glow);flex:1;position:relative;overflow:hidden;border:1px solid rgba(77,200,255,0.04);}
+.sy::before{content:'';position:absolute;top:0;left:16px;right:16px;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.05),transparent);}
+
+.sy-hd{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.sy-t{font-family:'Zalando Sans Expanded';font-weight:200;font-size:15px;letter-spacing:0.8px;}
+
+.sy-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.sy-c{background:var(--elevated);border-radius:12px;padding:10px 12px;box-shadow:var(--sh-inset);border:1px solid rgba(255,255,255,0.025);}
+.sy-cl{font-family:'Zalando Sans Condensed';font-size:8.5px;text-transform:uppercase;letter-spacing:1.5px;color:var(--t3);font-weight:400;margin-bottom:3px;}
+.sy-cv{font-family:'JetBrains Mono';font-size:13px;font-weight:500;letter-spacing:-0.2px;}
+
+.pos{grid-column:span 7;}
+.th{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.th-t{font-family:'Zalando Sans Expanded';font-weight:200;font-size:18px;letter-spacing:0.8px;}
+.th-b{font-family:'JetBrains Mono';font-size:10.5px;font-weight:500;padding:5px 14px;border-radius:20px;background:var(--cyan-dim);color:var(--cyan);box-shadow:var(--sh-raised);border:1px solid rgba(77,200,255,0.06);}
+
+table{width:100%;border-collapse:separate;border-spacing:0 3px;}
+thead th{text-align:left;font-family:'Zalando Sans Condensed';font-size:9px;text-transform:uppercase;letter-spacing:2px;color:var(--t3);font-weight:400;padding:6px 10px;}
+thead th:last-child,tbody td:last-child{text-align:right;}
+tbody td{padding:10px;font-size:13px;background:transparent;transition:background 0.15s;}
+tbody tr{border-radius:12px;}
+tbody tr:hover td{background:rgba(77,200,255,0.02);}
+tbody tr:hover td:first-child{border-radius:12px 0 0 12px;}
+tbody tr:hover td:last-child{border-radius:0 12px 12px 0;}
+
+.co{display:flex;align-items:center;gap:10px;}
+.co-i{width:32px;height:32px;border-radius:10px;background:linear-gradient(145deg,var(--elevated-top),var(--elevated));box-shadow:var(--sh-raised);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono';font-size:8.5px;font-weight:600;color:var(--t2);flex-shrink:0;border:1px solid rgba(255,255,255,0.03);}
+.co-n{font-family:'JetBrains Mono';font-weight:500;font-size:13px;letter-spacing:-0.2px;}
+.td-m{font-family:'JetBrains Mono';font-size:12.5px;font-weight:400;color:var(--t2);letter-spacing:-0.2px;}
+
+.prot{display:inline-flex;align-items:center;gap:3px;font-size:9.5px;font-weight:500;padding:3px 10px;border-radius:8px;box-shadow:var(--sh-raised);border:1px solid rgba(80,224,170,0.08);}
+.prot-ok{background:var(--green-dim);color:var(--green);}
+
+.st-c{font-family:'JetBrains Mono';font-size:9.5px;padding:4px 10px;border-radius:8px;background:var(--blue-dim);color:var(--blue);box-shadow:var(--sh-raised);font-weight:400;border:1px solid rgba(102,136,240,0.06);}
+
+.ar-sm{width:30px;height:30px;border-radius:50%;background:linear-gradient(145deg,var(--elevated-top),var(--elevated));box-shadow:var(--sh-raised);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.15s;border:1px solid rgba(255,255,255,0.03);}
+.ar-sm:hover{transform:scale(1.08);border-color:rgba(77,200,255,0.08);}
+.ar-sm:active{box-shadow:var(--sh-inset);}
+.ar-sm svg{width:12px;height:12px;}
+
+.act{grid-column:span 5;}
+.act-g{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;}
+
+.ab{background:linear-gradient(145deg,var(--elevated-top),var(--elevated));border:1px solid rgba(255,255,255,0.03);border-radius:16px;padding:16px 18px;cursor:pointer;box-shadow:var(--sh-card);text-align:left;display:flex;flex-direction:column;gap:4px;transition:all 0.2s;}
+.ab:hover{box-shadow:7px 7px 18px var(--sh-d),-3px -3px 10px var(--sh-l);transform:translateY(-1px);border-color:rgba(77,200,255,0.04);}
+.ab:active{box-shadow:var(--sh-inset);transform:translateY(0);}
+.ab-t{font-family:'Zalando Sans';font-size:13px;font-weight:300;color:var(--t1);}
+.ab-s{font-size:10.5px;color:var(--t3);font-weight:300;}
+
+.ab.pri{grid-column:span 2;background:linear-gradient(135deg,rgba(77,200,255,0.08),rgba(102,136,240,0.04));border-color:rgba(77,200,255,0.06);box-shadow:var(--sh-card),0 0 24px rgba(77,200,255,0.04);}
+.ab.pri .ab-t{color:var(--cyan);font-weight:600;}
+.ab.pri:hover{box-shadow:7px 7px 18px var(--sh-d),-3px -3px 10px var(--sh-l),0 0 30px rgba(77,200,255,0.05);}
+
+.sr{margin-top:20px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.025);}
+.sr-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+.sr-ch{font-family:'JetBrains Mono';font-size:10px;padding:5px 12px;border-radius:10px;background:linear-gradient(145deg,var(--elevated-top),var(--elevated));color:var(--t3);box-shadow:var(--sh-raised);font-weight:400;border:1px solid rgba(255,255,255,0.03);transition:all 0.15s;}
+.sr-ch:hover{border-color:rgba(255,255,255,0.05);}
+.sr-ch.on{background:linear-gradient(135deg,rgba(77,200,255,0.08),rgba(102,136,240,0.04));color:var(--cyan);border-color:rgba(77,200,255,0.08);box-shadow:var(--sh-raised),0 0 12px rgba(77,200,255,0.04);}
+
+.hero::after{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background-image:radial-gradient(circle at 2px 2px,rgba(77,200,255,0.015) 1px,transparent 1px);background-size:24px 24px;pointer-events:none;}
+.hero{border:1px solid transparent;background-clip:padding-box;position:relative;}
+.hero .border-glow{position:absolute;top:-1px;left:-1px;right:-1px;bottom:-1px;border-radius:21px;background:linear-gradient(135deg,rgba(77,200,255,0.08),transparent 40%,transparent 60%,rgba(102,136,240,0.06));z-index:-1;pointer-events:none;}
+
+.sb-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(6,8,18,0.7);backdrop-filter:blur(4px);z-index:45;opacity:0;transition:opacity 0.3s;pointer-events:none;}
+.sb-overlay.show{display:block;opacity:1;pointer-events:auto;}
+
+@media(max-width:1024px){
+  .sb{width:200px;padding:16px 10px;}
+  .mn{margin-left:200px;}
+  .pg{padding:20px;}
+  .bt{gap:12px;}
+  .hero{grid-column:span 12;padding:22px 24px;}
+  .hero .c-v{font-size:38px;}
+  .kpis{grid-column:span 12;grid-template-columns:repeat(3,1fr);gap:12px;}
+  .alpha-grid{grid-template-columns:1fr;}
+  .ch-cd{grid-column:span 12;min-height:320px;}
+  .sys{grid-column:span 12;flex-direction:row;}
+  .sys .sy{flex:1;}
+  .pos{grid-column:span 12;}
+  .act{grid-column:span 12;}
+  .pg-t{font-size:28px;}
+  .ch-val{font-size:22px;}
+  .tk{gap:14px;}
+}
+
+@media(max-width:768px){
+  .sb{transform:translateX(-100%);transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);width:260px;z-index:55;box-shadow:none;}
+  .sb.open{transform:translateX(0);box-shadow:10px 0 40px rgba(0,0,0,0.5);}
+  .mn{margin-left:0;}
+  .alpha-grid{grid-template-columns:1fr;}
+  .pg{padding:16px;}
+  .pg-t{font-size:24px;letter-spacing:0.8px;}
+  .bt{gap:12px;}
+}
+
+.loading{opacity:0.6;pointer-events:none;}
+.error-message{color:var(--red);font-family:'JetBrains Mono';font-size:12px;padding:10px;background:var(--red-dim);border-radius:8px;margin-top:10px;display:none;}
+</style>
 </head>
-<body class="font-sans text-sm antialiased">
-
-    <!-- Main Terminal Grid -->
-    <div class="grid-layout">
-        
-        <!-- Top Bar -->
-        <div class="col-span-3 glass-panel flex items-center justify-between px-6 py-2 z-50 relative">
-            <div class="flex items-center gap-6">
-                <div class="flex items-center gap-2">
-                    <div class="w-3 h-3 rounded-full bg-terminal-accent animate-pulse"></div>
-                    <span class="font-bold text-lg tracking-wider text-white">THE BRAIN <span class="text-terminal-accent">PRO</span></span>
-                    <span class="px-2 py-0.5 rounded bg-terminal-accent/20 text-terminal-accent text-xs font-mono border border-terminal-accent/30">v3.0 ADVANCED</span>
-                </div>
-                <div class="h-6 w-px bg-gray-700"></div>
-                <div class="flex items-center gap-4 font-mono text-xs">
-                    <div class="flex items-center gap-2">
-                        <span class="text-gray-400">BTC/USDT</span>
-                        <span class="text-xl font-bold text-white" id="btc-price">67,432.85</span>
-                        <span class="price-up">+2.4%</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-gray-400">ETH/USDT</span>
-                        <span class="text-lg font-semibold text-white" id="eth-price">3,245.12</span>
-                        <span class="price-down">-0.8%</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-gray-400">SOL/USDT</span>
-                        <span class="text-lg font-semibold text-white" id="sol-price">178.45</span>
-                        <span class="price-up">+5.2%</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="flex items-center gap-4">
-                <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-terminal-success/10 border border-terminal-success/30">
-                    <div class="w-2 h-2 rounded-full bg-terminal-success animate-pulse"></div>
-                    <span class="text-terminal-success font-mono text-xs font-semibold">SYSTEM ONLINE</span>
-                </div>
-                <div class="flex items-center gap-2 text-xs font-mono text-gray-400">
-                    <span>LATENCY: <span class="text-terminal-accent" id="latency">12ms</span></span>
-                    <span>WS: <span class="text-terminal-success">CONNECTED</span></span>
-                </div>
-                <button class="px-4 py-1.5 bg-terminal-danger/20 text-terminal-danger border border-terminal-danger/50 rounded hover:bg-terminal-danger/30 transition-all font-semibold text-xs tracking-wider" onclick="emergencyStop()">
-                    🛑 EMERGENCY STOP
-                </button>
-            </div>
-        </div>
-
-        <!-- Left Sidebar -->
-        <div class="glass-panel flex flex-col border-r border-gray-800 overflow-hidden">
-            <div class="p-4 border-b border-gray-800">
-                <div class="relative">
-                    <input type="text" placeholder="Search assets..." class="w-full terminal-input rounded-lg px-3 py-2 text-xs" id="search-asset">
-                    <span class="absolute right-3 top-2 text-gray-500">⌘K</span>
-                </div>
-            </div>
-            
-            <!-- Watchlist -->
-            <div class="flex-1 overflow-y-auto scrollbar-hide">
-                <div class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Favorites</div>
-                <div class="space-y-0.5" id="watchlist">
-                    <!-- Populated by JS -->
-                </div>
-                
-                <div class="px-4 py-2 mt-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Top Movers</div>
-                <div class="space-y-0.5" id="movers-list">
-                    <!-- Populated by JS -->
-                </div>
-            </div>
-
-            <!-- Portfolio Mini -->
-            <div class="p-4 border-t border-gray-800 bg-terminal-panel/50">
-                <div class="text-xs font-semibold text-gray-400 mb-3">PORTFOLIO</div>
-                <div class="font-mono">
-                    <div class="flex justify-between mb-1">
-                        <span class="text-gray-500">Balance</span>
-                        <span class="text-white font-bold" id="portfolio-balance">$28,444.00</span>
-                    </div>
-                    <div class="flex justify-between mb-1">
-                        <span class="text-gray-500">P&L (24h)</span>
-                        <span class="price-up" id="portfolio-pnl">+$1,234.50</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-500">Margin</span>
-                        <span class="text-terminal-warning">12.5%</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Center Chart Area -->
-        <div class="flex flex-col bg-terminal-bg relative overflow-hidden">
-            <!-- Chart Header -->
-            <div class="flex items-center justify-between px-4 py-3 border-b border-gray-800 glass-panel">
-                <div class="flex items-center gap-6">
-                    <div class="flex items-center gap-2">
-                        <span class="text-2xl font-bold text-white" id="active-pair">BTC/USDT</span>
-                        <span class="px-2 py-0.5 rounded bg-gray-800 text-xs text-gray-400">Perpetual</span>
-                    </div>
-                    <div class="flex items-center gap-4 font-mono text-xs">
-                        <div>
-                            <span class="text-gray-500">Mark</span>
-                            <span class="text-white ml-1" id="mark-price">67,432.85</span>
-                        </div>
-                        <div>
-                            <span class="text-gray-500">Index</span>
-                            <span class="text-white ml-1">67,428.12</span>
-                        </div>
-                        <div>
-                            <span class="text-gray-500">Funding</span>
-                            <span class="text-terminal-accent ml-1">0.01%</span>
-                        </div>
-                        <div>
-                            <span class="text-gray-500">24h Vol</span>
-                            <span class="text-white ml-1">2.4B</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="flex items-center gap-2">
-                    <div class="flex bg-gray-800 rounded-lg p-1">
-                        <button class="px-3 py-1 rounded text-xs font-medium bg-terminal-accent text-black transition-all" onclick="setTimeframe('1m')">1m</button>
-                        <button class="px-3 py-1 rounded text-xs font-medium text-gray-400 hover:text-white transition-all" onclick="setTimeframe('5m')">5m</button>
-                        <button class="px-3 py-1 rounded text-xs font-medium text-gray-400 hover:text-white transition-all" onclick="setTimeframe('15m')">15m</button>
-                        <button class="px-3 py-1 rounded text-xs font-medium text-gray-400 hover:text-white transition-all" onclick="setTimeframe('1H')">1H</button>
-                        <button class="px-3 py-1 rounded text-xs font-medium text-gray-400 hover:text-white transition-all" onclick="setTimeframe('4H')">4H</button>
-                        <button class="px-3 py-1 rounded text-xs font-medium text-terminal-accent hover:text-white transition-all" onclick="setTimeframe('1D')">1D</button>
-                    </div>
-                    <div class="flex gap-1 ml-2">
-                        <button class="p-1.5 rounded hover:bg-gray-700 text-gray-400" title="Indicators">📊</button>
-                        <button class="p-1.5 rounded hover:bg-gray-700 text-gray-400" title="Strategy">🎯</button>
-                        <button class="p-1.5 rounded hover:bg-gray-700 text-gray-400" title="Alerts">🔔</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Main Chart -->
-            <div class="flex-1 relative bg-terminal-bg" id="chart-container">
-                <canvas id="main-chart" class="w-full h-full block"></canvas>
-                
-                <!-- Strategy Signals Overlay -->
-                <div id="signals-overlay" class="absolute inset-0 pointer-events-none"></div>
-                
-                <!-- Chart Info Overlay -->
-                <div class="absolute top-4 left-4 glass-panel p-3 rounded-lg font-mono text-xs space-y-1 pointer-events-none">
-                    <div class="flex items-center gap-2">
-                        <span class="text-gray-500">O</span>
-                        <span class="text-white" id="chart-o">67,234.00</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-gray-500">H</span>
-                        <span class="text-terminal-success" id="chart-h">67,890.00</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-gray-500">L</span>
-                        <span class="text-terminal-danger" id="chart-l">66,890.00</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-gray-500">C</span>
-                        <span class="text-white" id="chart-c">67,432.85</span>
-                    </div>
-                    <div class="h-px bg-gray-700 my-2"></div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-gray-500">RSI(14)</span>
-                        <span class="text-terminal-accent" id="chart-rsi">62.45</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-gray-500">MA(20)</span>
-                        <span class="text-terminal-warning" id="chart-ma">66,980.23</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Bottom Panel: Order Entry + Market Depth -->
-            <div class="h-56 grid grid-cols-3 border-t border-gray-800">
-                <!-- Order Entry -->
-                <div class="col-span-1 glass-panel border-r border-gray-800 p-4 flex flex-col">
-                    <div class="flex gap-2 mb-3">
-                        <button class="flex-1 py-2 rounded bg-terminal-success/20 text-terminal-success border border-terminal-success/50 font-semibold text-xs hover:bg-terminal-success/30 transition-all" id="buy-btn" onclick="setOrderSide('buy')">BUY LONG</button>
-                        <button class="flex-1 py-2 rounded bg-terminal-danger/20 text-terminal-danger border border-terminal-danger/50 font-semibold text-xs hover:bg-terminal-danger/30 transition-all opacity-50" id="sell-btn" onclick="setOrderSide('sell')">SELL SHORT</button>
-                    </div>
-                    
-                    <div class="space-y-2 font-mono text-xs flex-1">
-                        <div class="flex justify-between items-center">
-                            <span class="text-gray-500">Order Type</span>
-                            <select class="terminal-input rounded px-2 py-1 text-xs w-32">
-                                <option>Limit</option>
-                                <option>Market</option>
-                                <option>Stop Limit</option>
-                            </select>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-gray-500">Price</span>
-                            <input type="number" class="terminal-input rounded px-2 py-1 text-xs w-32 text-right" value="67432.85" step="0.01">
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-gray-500">Size</span>
-                            <input type="number" class="terminal-input rounded px-2 py-1 text-xs w-32 text-right" value="0.15" step="0.001">
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-gray-500">Leverage</span>
-                            <div class="flex items-center gap-2 w-32 justify-end">
-                                <input type="range" min="1" max="125" value="10" class="w-20 accent-terminal-accent">
-                                <span class="text-terminal-accent w-8 text-right">10x</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <button class="w-full mt-3 py-2.5 rounded bg-terminal-success hover:bg-terminal-success/80 text-black font-bold text-xs tracking-wider transition-all transform active:scale-95" onclick="placeOrder()">
-                        PLACE BUY ORDER
-                    </button>
-                </div>
-
-                <!-- Market Depth Visualization -->
-                <div class="col-span-2 glass-panel p-4 flex flex-col">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Market Depth & Recent Trades</span>
-                        <div class="flex gap-4 font-mono text-xs">
-                            <span class="text-terminal-danger">Ask: 67,440.20</span>
-                            <span class="text-terminal-success">Bid: 67,432.10</span>
-                            <span class="text-gray-500">Spread: 0.012%</span>
-                        </div>
-                    </div>
-                    <div class="flex-1 grid grid-cols-2 gap-4">
-                        <canvas id="depth-chart" class="w-full h-full"></canvas>
-                        <div class="overflow-y-auto scrollbar-hide font-mono text-xs space-y-0.5" id="recent-trades">
-                            <!-- Populated by JS -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Right Sidebar -->
-        <div class="glass-panel border-l border-gray-800 flex flex-col overflow-hidden">
-            <!-- Order Book -->
-            <div class="flex-1 flex flex-col min-h-0">
-                <div class="px-4 py-3 border-b border-gray-800 flex items-center justify-between">
-                    <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Order Book</span>
-                    <div class="flex gap-1">
-                        <button class="p-1 rounded hover:bg-gray-700 text-gray-500 text-xs">0.01</button>
-                        <button class="p-1 rounded hover:bg-gray-700 text-gray-500 text-xs">0.1</button>
-                        <button class="p-1 rounded hover:bg-gray-700 text-gray-500 text-xs">1</button>
-                    </div>
-                </div>
-                
-                <div class="flex-1 overflow-hidden flex flex-col font-mono text-xs">
-                    <!-- Asks -->
-                    <div class="flex-1 overflow-y-auto scrollbar-hide flex flex-col-reverse" id="order-book-asks">
-                        <!-- Red entries -->
-                    </div>
-                    
-                    <!-- Current Price -->
-                    <div class="py-2 border-y border-gray-800 bg-terminal-panel/50 text-center">
-                        <span class="text-lg font-bold text-white" id="mid-price">67,436.15</span>
-                        <span class="text-xs text-gray-500 ml-1">≈ $67,436.15</span>
-                    </div>
-                    
-                    <!-- Bids -->
-                    <div class="flex-1 overflow-y-auto scrollbar-hide" id="order-book-bids">
-                        <!-- Green entries -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- Strategy Panel -->
-            <div class="h-64 border-t border-gray-800 p-4 bg-terminal-panel/30">
-                <div class="flex items-center justify-between mb-3">
-                    <span class="text-xs font-semibold text-terminal-accent uppercase tracking-wider">Active Strategies</span>
-                    <button class="text-xs text-gray-500 hover:text-white">+ New</button>
-                </div>
-                
-                <div class="space-y-2" id="strategy-list">
-                    <div class="p-2 rounded bg-gray-800/50 border border-gray-700 hover:border-terminal-accent/50 cursor-pointer transition-all group">
-                        <div class="flex items-center justify-between mb-1">
-                            <span class="text-xs font-medium text-white group-hover:text-terminal-accent">RSI Divergence</span>
-                            <span class="w-2 h-2 rounded-full bg-terminal-success animate-pulse"></span>
-                        </div>
-                        <div class="flex justify-between text-xs font-mono text-gray-500">
-                            <span>BTC/USDT</span>
-                            <span>Entry: 66k-68k</span>
-                        </div>
-                        <div class="mt-2 flex gap-1">
-                            <span class="px-1.5 py-0.5 rounded bg-terminal-success/20 text-terminal-success text-xs">Long</span>
-                            <span class="px-1.5 py-0.5 rounded bg-gray-700 text-gray-400 text-xs">10x</span>
-                        </div>
-                    </div>
-
-                    <div class="p-2 rounded bg-gray-800/50 border border-gray-700 hover:border-terminal-accent/50 cursor-pointer transition-all group">
-                        <div class="flex items-center justify-between mb-1">
-                            <span class="text-xs font-medium text-white group-hover:text-terminal-accent">EMA Crossover</span>
-                            <span class="w-2 h-2 rounded-full bg-terminal-warning animate-pulse"></span>
-                        </div>
-                        <div class="flex justify-between text-xs font-mono text-gray-500">
-                            <span>ETH/USDT</span>
-                            <span>Waiting signal</span>
-                        </div>
-                        <div class="mt-2 flex gap-1">
-                            <span class="px-1.5 py-0.5 rounded bg-terminal-danger/20 text-terminal-danger text-xs">Short</span>
-                            <span class="px-1.5 py-0.5 rounded bg-gray-700 text-gray-400 text-xs">5x</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+<body>
+<div class="shell">
+  <div class="sb-overlay" id="sbOverlay" onclick="toggleSb()"></div>
+  <nav class="sb" id="sidebar">
+    <div class="sb-brand">
+      <div class="sb-ico">B</div>
+      <div><div class="sb-name">The Brain</div><div class="sb-sub">Operator Console</div></div>
     </div>
+    <div class="nv-label">Monitor</div>
+    <a class="nv on" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="4" rx="2"/><rect x="14" y="10" width="7" height="7" rx="2"/><rect x="3" y="13" width="7" height="4" rx="2"/></svg>Command Center</a>
+    <a class="nv" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>Portfolio</a>
+    <a class="nv" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18"/><path d="M9 3v18"/></svg>Heatmap</a>
+    <a class="nv" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M8 12a4 4 0 0 1 8 0"/></svg>Correlation</a>
+    <div class="nv-label">Trade</div>
+    <a class="nv" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>Terminal</a>
+    <a class="nv" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>Strategy Lab</a>
+    <div class="nv-label">Configure</div>
+    <a class="nv" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/></svg>Accounts</a>
+    <a class="nv" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v2m0 18v2m-9-11h2m18 0h2"/></svg>Settings</a>
+    <a class="nv" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Risk</a>
+    <div class="nv-label">Intelligence</div>
+    <a class="nv" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><path d="M12 2a8 8 0 0 0-8 8c0 3.4 2.1 6.2 5 7.4V19a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1.6c2.9-1.2 5-4 5-7.4a8 8 0 0 0-8-8z"/><path d="M9 22h6"/></svg>AI Insight</a>
+    <a class="nv" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg>News Feed</a>
+    <div class="sb-ft"><div class="cn"><div class="cn-d"></div>Bybit</div><div class="cn"><div class="cn-d"></div>Binance</div><div class="cn"><div class="cn-d"></div>KuCoin</div></div>
+  </nav>
 
-    <!-- Alert Toast Container -->
-    <div id="toast-container" class="fixed bottom-4 right-4 z-50 space-y-2"></div>
+  <div class="mn">
+    <header class="tb">
+      <div class="tb-live"><div class="tb-dot"></div>LIVE</div>
+      <div class="tk">
+        <div><span class="tk-l">Equity </span><span class="tk-v" id="tk-equity">$2,844.85</span></div>
+        <div><span class="tk-l">Alpha </span><span class="tk-p" id="tk-alpha">+$0.00</span></div>
+        <div><span class="tk-l">Shadow </span><span class="tk-n" id="tk-shadow">0 opp</span></div>
+        <div><span class="tk-l">Toxicity </span><span class="tk-v" id="tk-toxicity">Clean</span></div>
+      </div>
+      <div class="tb-r">
+        <button class="tb-b lk">Protected: Locked</button>
+        <button class="tb-b">Simple</button>
+        <button class="tb-b md">Advanced</button>
+      </div>
+    </header>
 
-    <script>
-        // Terminal State
-        const state = {
-            currentPair: 'BTC/USDT',
-            timeframe: '1D',
-            orderSide: 'buy',
-            price: 67432.85,
-            portfolio: 28444.00,
-            pnl: 1234.50,
-            candles: [],
-            orderBook: { asks: [], bids: [] },
-            trades: []
-        };
+    <div class="pg">
+      <h1 class="pg-t">Command Center</h1>
+      <p class="pg-s">Live system status, key metrics, and next actions</p>
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            initWatchlist();
-            initOrderBook();
-            initChart();
-            initDepthChart();
-            startDataFeed();
-            updateLatency();
+      <div class="bt">
+        <div class="cd hero">
+          <div class="border-glow"></div>
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;position:relative;z-index:1;">
+            <div class="c-l">Total Equity</div>
+            <div class="ar glow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></div>
+          </div>
+          <div class="c-v" id="hero-equity" style="font-size:46px;letter-spacing:-2.5px;position:relative;z-index:1;">$2,844.85</div>
+          <div class="pnl" style="position:relative;z-index:1;">
+            <span class="pnl-b pnl-p" id="hero-unrealized">▲ $0.00 unrealized</span>
+            <span class="pnl-b pnl-n" id="hero-realized">▼ $0.00 realized</span>
+          </div>
+          <div class="mt" style="position:relative;z-index:1;">
+            <div><div class="mt-l">Cash</div><div class="mt-v">$0.00</div></div>
+            <div><div class="mt-l">Exposure</div><div class="mt-v" id="hero-exposure">$0.00</div></div>
+            <div><div class="mt-l">Positions</div><div class="mt-v" id="hero-positions" style="color:var(--cyan);">0</div></div>
+            <div><div class="mt-l">Venues</div><div class="mt-v">4 / 4</div></div>
+          </div>
+        </div>
+
+        <div class="cd kpis">
+          <div class="kp">
+            <div class="kp-top">
+              <div class="ic cy"><svg viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="1.5" stroke-linecap="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+              <div class="ar"><svg viewBox="0 0 24 24" fill="none" stroke="var(--t2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></div>
+            </div>
+            <div class="c-l">Win Rate (10D)</div>
+            <div class="c-v" style="font-size:30px;color:var(--cyan);">100%</div>
+            <div class="c-s">8W / 0L</div>
+            <div class="spark" id="s1"></div>
+          </div>
+          <div class="kp">
+            <div class="kp-top">
+              <div class="ic gn"><svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.5" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+              <div class="ar"><svg viewBox="0 0 24 24" fill="none" stroke="var(--t2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></div>
+            </div>
+            <div class="c-l">Risk State</div>
+            <div class="c-v" style="font-size:24px;color:var(--green);">Healthy</div>
+            <div class="c-s">Secret Weapons Active</div>
+            <div style="margin-top:auto;padding-top:12px;">
+              <div style="display:flex;justify-content:space-between;font-size:8.5px;color:var(--t3);margin-bottom:5px;letter-spacing:0.5px;"><span>0%</span><span style="text-transform:uppercase;letter-spacing:1px;">Alpha Load</span><span>100%</span></div>
+              <div style="height:6px;background:var(--elevated);border-radius:4px;box-shadow:var(--sh-inset);overflow:hidden;border:1px solid rgba(255,255,255,0.03);">
+                <div style="height:100%;width:75%;background:linear-gradient(90deg,var(--cyan),var(--purple));border-radius:4px;box-shadow:0 0 10px rgba(77,200,255,0.3);"></div>
+              </div>
+            </div>
+          </div>
+          <div class="kp">
+            <div class="kp-top">
+              <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="1.5" stroke-linecap="round"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg></div>
+              <div class="ar"><svg viewBox="0 0 24 24" fill="none" stroke="var(--t2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></div>
+            </div>
+            <div class="c-l">Shadow Missed</div>
+            <div class="c-v" id="shadow-missed" style="font-size:30px;color:var(--amber);">$0.00</div>
+            <div class="c-s">Last 24h opportunities</div>
+            <div class="spark" id="s2"></div>
+          </div>
+        </div>
+
+        <!-- ALPHA WEAPONS SECTION -->
+        <div class="alpha-section">
+          <div class="alpha-header">Alpha Weapons Active</div>
+          <div class="alpha-grid">
             
-            // Keyboard shortcuts
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
-                    e.preventDefault();
-                    document.getElementById('search-asset').focus();
-                }
-                if (e.key === 'b') setOrderSide('buy');
-                if (e.key === 's') setOrderSide('sell');
-                if (e.key === 'Enter' && e.target.tagName !== 'INPUT') placeOrder();
-            });
-        });
-
-        // Watchlist Data
-        const assets = [
-            { pair: 'BTC/USDT', price: 67432.85, change: 2.4, volume: '2.4B' },
-            { pair: 'ETH/USDT', price: 3245.12, change: -0.8, volume: '1.2B' },
-            { pair: 'SOL/USDT', price: 178.45, change: 5.2, volume: '890M' },
-            { pair: 'XRP/USDT', price: 0.6284, change: 1.2, volume: '456M' },
-            { pair: 'DOGE/USDT', price: 0.1782, change: 8.4, volume: '234M' },
-            { pair: 'ADA/USDT', price: 0.7843, change: -2.1, volume: '123M' },
-            { pair: 'AVAX/USDT', price: 42.15, change: 3.4, volume: '89M' },
-            { pair: 'DOT/USDT', price: 9.24, change: -1.2, volume: '67M' }
-        ];
-
-        function initWatchlist() {
-            const container = document.getElementById('watchlist');
-            assets.forEach(asset => {
-                const div = document.createElement('div');
-                div.className = 'px-4 py-3 hover:bg-gray-800/50 cursor-pointer transition-colors flex items-center justify-between group';
-                div.innerHTML = `
-                    <div>
-                        <div class="font-medium text-white text-xs">${asset.pair}</div>
-                        <div class="text-xs text-gray-500">Vol ${asset.volume}</div>
-                    </div>
-                    <div class="text-right">
-                        <div class="font-mono text-xs text-white">${asset.price.toLocaleString()}</div>
-                        <div class="font-mono text-xs ${asset.change >= 0 ? 'text-terminal-success' : 'text-terminal-danger'}">
-                            ${asset.change >= 0 ? '+' : ''}${asset.change}%
-                        </div>
-                    </div>
-                `;
-                div.onclick = () => selectPair(asset.pair);
-                container.appendChild(div);
-            });
-
-            // Top movers (sorted by change)
-            const movers = [...assets].sort((a, b) => Math.abs(b.change) - Math.abs(a.change));
-            const moversContainer = document.getElementById('movers-list');
-            movers.slice(0, 4).forEach(asset => {
-                const div = document.createElement('div');
-                div.className = 'px-4 py-2 hover:bg-gray-800/50 cursor-pointer transition-colors flex items-center justify-between';
-                div.innerHTML = `
-                    <span class="text-xs text-gray-300">${asset.pair}</span>
-                    <span class="font-mono text-xs ${asset.change >= 0 ? 'text-terminal-success' : 'text-terminal-danger'}">
-                        ${asset.change >= 0 ? '▲' : '▼'} ${Math.abs(asset.change)}%
-                    </span>
-                `;
-                moversContainer.appendChild(div);
-            });
-        }
-
-        // Order Book Simulation
-        function initOrderBook() {
-            generateOrderBook();
-            renderOrderBook();
-        }
-
-        function generateOrderBook() {
-            const basePrice = state.price;
-            state.orderBook.asks = [];
-            state.orderBook.bids = [];
-            
-            for (let i = 1; i <= 15; i++) {
-                state.orderBook.asks.push({
-                    price: basePrice + (i * 10),
-                    size: (Math.random() * 2 + 0.1).toFixed(3),
-                    total: (Math.random() * 50 + 10).toFixed(1)
-                });
-                state.orderBook.bids.push({
-                    price: basePrice - (i * 10),
-                    size: (Math.random() * 2 + 0.1).toFixed(3),
-                    total: (Math.random() * 50 + 10).toFixed(1)
-                });
-            }
-        }
-
-        function renderOrderBook() {
-            const asksContainer = document.getElementById('order-book-asks');
-            const bidsContainer = document.getElementById('order-book-bids');
-            
-            asksContainer.innerHTML = state.orderBook.asks.map((ask, i) => `
-                <div class="order-book-row flex justify-between px-4 py-1 cursor-pointer relative overflow-hidden">
-                    <div class="absolute right-0 top-0 bottom-0 bg-terminal-danger/10" style="width: ${Math.random() * 100}%"></div>
-                    <span class="relative z-10 text-terminal-danger font-mono text-xs">${ask.price.toFixed(2)}</span>
-                    <span class="relative z-10 text-gray-400 font-mono text-xs">${ask.size}</span>
+            <!-- Shadow Catch-Up -->
+            <div class="weapon-card shadow">
+              <div class="weapon-header">
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <div class="ic gn"><svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+                  <div class="weapon-title">Shadow Catch-Up</div>
                 </div>
-            `).join('');
-            
-            bidsContainer.innerHTML = state.orderBook.bids.map((bid, i) => `
-                <div class="order-book-row flex justify-between px-4 py-1 cursor-pointer relative overflow-hidden">
-                    <div class="absolute right-0 top-0 bottom-0 bg-terminal-success/10" style="width: ${Math.random() * 100}%"></div>
-                    <span class="relative z-10 text-terminal-success font-mono text-xs">${bid.price.toFixed(2)}</span>
-                    <span class="relative z-10 text-gray-400 font-mono text-xs">${bid.size}</span>
+                <div class="weapon-status active">ACTIVE</div>
+              </div>
+              <div class="weapon-metric" id="shadow-missed-card">$0.00</div>
+              <div class="weapon-sub">Missed Alpha Detected</div>
+              <div class="opportunity-list" id="shadow-opportunities">
+                <div class="opp-item">
+                  <span class="opp-symbol">SCANNING...</span>
+                  <span class="opp-badge low">WAIT</span>
                 </div>
-            `).join('');
-        }
+              </div>
+            </div>
 
-        // Chart Implementation (Canvas-based)
-        function initChart() {
-            const canvas = document.getElementById('main-chart');
-            const container = document.getElementById('chart-container');
-            
-            // Handle resize
-            const resize = () => {
-                canvas.width = container.clientWidth * window.devicePixelRatio;
-                canvas.height = container.clientHeight * window.devicePixelRatio;
-                canvas.style.width = container.clientWidth + 'px';
-                canvas.style.height = container.clientHeight + 'px';
-                drawChart();
-            };
-            
-            window.addEventListener('resize', resize);
-            resize();
-            
-            // Generate initial candles
-            generateCandles();
-            drawChart();
-            
-            // Interactive crosshair
-            canvas.addEventListener('mousemove', (e) => {
-                drawChart(e.offsetX, e.offsetY);
-            });
-            
-            canvas.addEventListener('mouseleave', () => {
-                drawChart();
-            });
-        }
-
-        function generateCandles() {
-            let price = 65000;
-            const now = Date.now();
-            for (let i = 100; i >= 0; i--) {
-                const volatility = Math.random() * 400 - 200;
-                const open = price;
-                const close = price + volatility;
-                const high = Math.max(open, close) + Math.random() * 150;
-                const low = Math.min(open, close) - Math.random() * 150;
-                
-                state.candles.push({
-                    time: now - (i * 86400000),
-                    open,
-                    high,
-                    low,
-                    close,
-                    volume: Math.random() * 1000 + 500
-                });
-                price = close;
-            }
-            state.price = state.candles[state.candles.length - 1].close;
-        }
-
-        function drawChart(mouseX, mouseY) {
-            const canvas = document.getElementById('main-chart');
-            const ctx = canvas.getContext('2d');
-            const width = canvas.width / window.devicePixelRatio;
-            const height = canvas.height / window.devicePixelRatio;
-            
-            // Clear
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Calculate scale
-            const candleWidth = (width - 100) / state.candles.length * 0.7;
-            const gap = (width - 100) / state.candles.length * 0.3;
-            const allPrices = state.candles.flatMap(c => [c.high, c.low]);
-            const minPrice = Math.min(...allPrices) * 0.995;
-            const maxPrice = Math.max(...allPrices) * 1.005;
-            const priceRange = maxPrice - minPrice;
-            
-            // Grid lines
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
-            ctx.lineWidth = 1;
-            for (let i = 0; i < 5; i++) {
-                const y = (height - 60) * (i / 4) + 30;
-                ctx.beginPath();
-                ctx.moveTo(0, y);
-                ctx.lineTo(width - 80, y);
-                ctx.stroke();
-                
-                // Price labels
-                const price = maxPrice - (priceRange * (i / 4));
-                ctx.fillStyle = '#6b7280';
-                ctx.font = '11px JetBrains Mono';
-                ctx.textAlign = 'left';
-                ctx.fillText(price.toFixed(2), width - 75, y + 3);
-            }
-            
-            // Draw candles
-            state.candles.forEach((candle, i) => {
-                const x = i * (candleWidth + gap) + 50;
-                const yOpen = 30 + (height - 60) * (1 - (candle.open - minPrice) / priceRange);
-                const yClose = 30 + (height - 60) * (1 - (candle.close - minPrice) / priceRange);
-                const yHigh = 30 + (height - 60) * (1 - (candle.high - minPrice) / priceRange);
-                const yLow = 30 + (height - 60) * (1 - (candle.low - minPrice) / priceRange);
-                
-                const isGreen = candle.close >= candle.open;
-                const color = isGreen ? '#00ff88' : '#ff4757';
-                
-                ctx.fillStyle = color;
-                ctx.strokeStyle = color;
-                
-                // Wick
-                ctx.beginPath();
-                ctx.moveTo(x + candleWidth / 2, yHigh);
-                ctx.lineTo(x + candleWidth / 2, yLow);
-                ctx.stroke();
-                
-                // Body
-                ctx.fillRect(x, Math.min(yOpen, yClose), candleWidth, Math.abs(yClose - yOpen) || 1);
-                
-                // Add strategy signals
-                if (i === 85 || i === 92) {
-                    // Buy signal
-                    drawSignal(ctx, x + candleWidth/2, yLow + 20, 'buy');
-                }
-                if (i === 78) {
-                    // Sell signal
-                    drawSignal(ctx, x + candleWidth/2, yHigh - 20, 'sell');
-                }
-            });
-            
-            // EMA Line
-            ctx.strokeStyle = '#ffa502';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            state.candles.forEach((candle, i) => {
-                const x = i * (candleWidth + gap) + 50 + candleWidth / 2;
-                const ema = candle.close * 0.98 + Math.random() * 100; // Simulated EMA
-                const y = 30 + (height - 60) * (1 - (ema - minPrice) / priceRange);
-                if (i === 0) ctx.moveTo(x, y);
-                else ctx.lineTo(x, y);
-            });
-            ctx.stroke();
-            
-            // Crosshair
-            if (mouseX && mouseY) {
-                ctx.strokeStyle = 'rgba(0, 212, 255, 0.5)';
-                ctx.lineWidth = 1;
-                ctx.setLineDash([5, 5]);
-                
-                ctx.beginPath();
-                ctx.moveTo(mouseX, 0);
-                ctx.lineTo(mouseX, height);
-                ctx.stroke();
-                
-                ctx.beginPath();
-                ctx.moveTo(0, mouseY);
-                ctx.lineTo(width, mouseY);
-                ctx.stroke();
-                
-                ctx.setLineDash([]);
-                
-                // Price at crosshair
-                const priceAtY = maxPrice - (priceRange * (mouseY - 30) / (height - 60));
-                ctx.fillStyle = '#00d4ff';
-                ctx.fillRect(width - 80, mouseY - 10, 80, 20);
-                ctx.fillStyle = '#000';
-                ctx.textAlign = 'center';
-                ctx.fillText(priceAtY.toFixed(2), width - 40, mouseY + 4);
-            }
-            
-            // Update OHLC display
-            const lastCandle = state.candles[state.candles.length - 1];
-            document.getElementById('chart-o').textContent = lastCandle.open.toFixed(2);
-            document.getElementById('chart-h').textContent = lastCandle.high.toFixed(2);
-            document.getElementById('chart-l').textContent = lastCandle.low.toFixed(2);
-            document.getElementById('chart-c').textContent = lastCandle.close.toFixed(2);
-        }
-
-        function drawSignal(ctx, x, y, type) {
-            const color = type === 'buy' ? '#00ff88' : '#ff4757';
-            const arrow = type === 'buy' ? '▲' : '▼';
-            
-            ctx.fillStyle = color;
-            ctx.font = 'bold 14px Arial';
-            ctx.textAlign = 'center';
-            ctx.fillText(arrow, x, y);
-            
-            ctx.shadowColor = color;
-            ctx.shadowBlur = 10;
-            ctx.beginPath();
-            ctx.arc(x, type === 'buy' ? y - 5 : y + 5, 3, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.shadowBlur = 0;
-        }
-
-        // Depth Chart
-        function initDepthChart() {
-            const canvas = document.getElementById('depth-chart');
-            const ctx = canvas.getContext('2d');
-            
-            const resize = () => {
-                const parent = canvas.parentElement;
-                canvas.width = parent.clientWidth * window.devicePixelRatio;
-                canvas.height = parent.clientHeight * window.devicePixelRatio;
-                canvas.style.width = parent.clientWidth + 'px';
-                canvas.style.height = parent.clientHeight + 'px';
-                drawDepth();
-            };
-            
-            window.addEventListener('resize', resize);
-            
-            function drawDepth() {
-                const width = canvas.width / window.devicePixelRatio;
-                const height = canvas.height / window.devicePixelRatio;
-                
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                
-                // Bids (left side)
-                const gradientBid = ctx.createLinearGradient(0, 0, width/2, 0);
-                gradientBid.addColorStop(0, 'rgba(0, 255, 136, 0.3)');
-                gradientBid.addColorStop(1, 'rgba(0, 255, 136, 0.1)');
-                
-                ctx.fillStyle = gradientBid;
-                ctx.beginPath();
-                ctx.moveTo(width/2, height);
-                for (let i = 0; i <= 20; i++) {
-                    const x = width/2 - (width/2 * (i/20));
-                    const y = height - (height * (1 - Math.pow(i/20, 0.5)) * 0.8);
-                    ctx.lineTo(x, y);
-                }
-                ctx.lineTo(0, height);
-                ctx.closePath();
-                ctx.fill();
-                
-                // Asks (right side)
-                const gradientAsk = ctx.createLinearGradient(width/2, 0, width, 0);
-                gradientAsk.addColorStop(0, 'rgba(255, 71, 87, 0.1)');
-                gradientAsk.addColorStop(1, 'rgba(255, 71, 87, 0.3)');
-                
-                ctx.fillStyle = gradientAsk;
-                ctx.beginPath();
-                ctx.moveTo(width/2, height);
-                for (let i = 0; i <= 20; i++) {
-                    const x = width/2 + (width/2 * (i/20));
-                    const y = height - (height * (1 - Math.pow(i/20, 0.5)) * 0.6);
-                    ctx.lineTo(x, y);
-                }
-                ctx.lineTo(width, height);
-                ctx.closePath();
-                ctx.fill();
-                
-                // Center line
-                ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
-                ctx.lineWidth = 1;
-                ctx.beginPath();
-                ctx.moveTo(width/2, 0);
-                ctx.lineTo(width/2, height);
-                ctx.stroke();
-            }
-            
-            resize();
-        }
-
-        // Real-time Updates
-        function startDataFeed() {
-            // Simulate trades
-            setInterval(() => {
-                const trade = {
-                    price: state.price + (Math.random() - 0.5) * 10,
-                    size: (Math.random() * 0.5).toFixed(3),
-                    side: Math.random() > 0.5 ? 'buy' : 'sell',
-                    time: new Date().toLocaleTimeString('en-US', { hour12: false })
-                };
-                
-                const tradesContainer = document.getElementById('recent-trades');
-                const div = document.createElement('div');
-                div.className = `flex justify-between px-2 py-1 ${trade.side === 'buy' ? 'text-terminal-success' : 'text-terminal-danger'} animate-flash-${trade.side === 'buy' ? 'green' : 'red'}`;
-                div.innerHTML = `
-                    <span>${trade.price.toFixed(2)}</span>
-                    <span class="text-gray-500">${trade.size}</span>
-                    <span class="text-gray-600">${trade.time}</span>
-                `;
-                tradesContainer.insertBefore(div, tradesContainer.firstChild);
-                if (tradesContainer.children.length > 20) {
-                    tradesContainer.removeChild(tradesContainer.lastChild);
-                }
-                
-                // Update price
-                state.price = trade.price;
-                document.getElementById('btc-price').textContent = state.price.toLocaleString(undefined, {minimumFractionDigits: 2});
-                document.getElementById('mark-price').textContent = state.price.toLocaleString(undefined, {minimumFractionDigits: 2});
-                document.getElementById('mid-price').textContent = (state.price + 3.3).toLocaleString(undefined, {minimumFractionDigits: 2});
-                
-                // Update order book occasionally
-                if (Math.random() > 0.7) {
-                    renderOrderBook();
-                }
-            }, 800);
-            
-            // Update chart occasionally
-            setInterval(() => {
-                const lastCandle = state.candles[state.candles.length - 1];
-                lastCandle.close = state.price;
-                lastCandle.high = Math.max(lastCandle.high, state.price);
-                lastCandle.low = Math.min(lastCandle.low, state.price);
-                drawChart();
-            }, 2000);
-        }
-
-        function updateLatency() {
-            setInterval(() => {
-                const latency = Math.floor(Math.random() * 20 + 8);
-                document.getElementById('latency').textContent = latency + 'ms';
-                document.getElementById('latency').style.color = latency < 15 ? '#00d4ff' : latency < 30 ? '#ffa502' : '#ff4757';
-            }, 3000);
-        }
-
-        // Actions
-        function selectPair(pair) {
-            state.currentPair = pair;
-            document.getElementById('active-pair').textContent = pair;
-            showToast(`Switched to ${pair}`, 'info');
-            generateCandles();
-            drawChart();
-        }
-
-        function setTimeframe(tf) {
-            state.timeframe = tf;
-            document.querySelectorAll('[onclick^="setTimeframe"]').forEach(btn => {
-                if (btn.textContent === tf) {
-                    btn.className = 'px-3 py-1 rounded text-xs font-medium bg-terminal-accent text-black transition-all';
-                } else {
-                    btn.className = 'px-3 py-1 rounded text-xs font-medium text-gray-400 hover:text-white transition-all';
-                }
-            });
-            generateCandles();
-            drawChart();
-        }
-
-        function setOrderSide(side) {
-            state.orderSide = side;
-            const buyBtn = document.getElementById('buy-btn');
-            const sellBtn = document.getElementById('sell-btn');
-            const placeBtn = document.querySelector('[onclick="placeOrder()"]');
-            
-            if (side === 'buy') {
-                buyBtn.className = 'flex-1 py-2 rounded bg-terminal-success/20 text-terminal-success border border-terminal-success/50 font-semibold text-xs hover:bg-terminal-success/30 transition-all';
-                sellBtn.className = 'flex-1 py-2 rounded bg-terminal-danger/20 text-terminal-danger border border-terminal-danger/50 font-semibold text-xs hover:bg-terminal-danger/30 transition-all opacity-50';
-                placeBtn.textContent = 'PLACE BUY ORDER';
-                placeBtn.className = 'w-full mt-3 py-2.5 rounded bg-terminal-success hover:bg-terminal-success/80 text-black font-bold text-xs tracking-wider transition-all transform active:scale-95';
-            } else {
-                sellBtn.className = 'flex-1 py-2 rounded bg-terminal-danger/20 text-terminal-danger border border-terminal-danger/50 font-semibold text-xs hover:bg-terminal-danger/30 transition-all';
-                buyBtn.className = 'flex-1 py-2 rounded bg-terminal-success/20 text-terminal-success border border-terminal-success/50 font-semibold text-xs hover:bg-terminal-success/30 transition-all opacity-50';
-                placeBtn.textContent = 'PLACE SELL ORDER';
-                placeBtn.className = 'w-full mt-3 py-2.5 rounded bg-terminal-danger hover:bg-terminal-danger/80 text-white font-bold text-xs tracking-wider transition-all transform active:scale-95';
-            }
-        }
-
-        function placeOrder() {
-            const side = state.orderSide.toUpperCase();
-            showToast(`${side} ORDER PLACED: 0.15 BTC @ $${state.price.toLocaleString()}`, side === 'BUY' ? 'success' : 'danger');
-            
-            // Update portfolio
-            const change = side === 'BUY' ? 1500 : -1500;
-            state.portfolio += change;
-            state.pnl += change * 0.1;
-            
-            document.getElementById('portfolio-balance').textContent = '$' + state.portfolio.toLocaleString(undefined, {minimumFractionDigits: 2});
-            const pnlEl = document.getElementById('portfolio-pnl');
-            pnlEl.textContent = (state.pnl >= 0 ? '+' : '') + '$' + state.pnl.toLocaleString(undefined, {minimumFractionDigits: 2});
-            pnlEl.className = state.pnl >= 0 ? 'price-up' : 'price-down';
-        }
-
-        function emergencyStop() {
-            showToast('🛑 EMERGENCY STOP ACTIVATED - ALL POSITIONS CLOSING', 'danger');
-            document.body.style.animation = 'flashRed 1s ease-in-out 3';
-            setTimeout(() => {
-                document.body.style.animation = '';
-            }, 3000);
-        }
-
-        function showToast(message, type) {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            
-            const colors = {
-                success: 'bg-terminal-success/20 border-terminal-success text-terminal-success',
-                danger: 'bg-terminal-danger/20 border-terminal-danger text-terminal-danger',
-                info: 'bg-terminal-accent/20 border-terminal-accent text-terminal-accent',
-                warning: 'bg-terminal-warning/20 border-terminal-warning text-terminal-warning'
-            };
-            
-            toast.className = `px-4 py-3 rounded-lg border backdrop-blur-md shadow-lg transform transition-all duration-300 translate-x-full ${colors[type]}`;
-            toast.innerHTML = `
-                <div class="flex items-center gap-2">
-                    <span class="text-lg">${type === 'success' ? '✓' : type === 'danger' ? '✕' : type === 'warning' ? '⚠' : 'ℹ'}</span>
-                    <span class="font-mono text-xs font-semibold">${message}</span>
+            <!-- Gamma Proxy -->
+            <div class="weapon-card gamma">
+              <div class="weapon-header">
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <div class="ic purple"><svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2"><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/></svg></div>
+                  <div class="weapon-title">Gamma Proxy</div>
                 </div>
-            `;
-            
-            container.appendChild(toast);
-            
-            // Animate in
-            setTimeout(() => toast.classList.remove('translate-x-full'), 10);
-            
-            // Remove after delay
-            setTimeout(() => {
-                toast.classList.add('translate-x-full', 'opacity-0');
-                setTimeout(() => toast.remove(), 300);
-            }, 4000);
-        }
+                <div class="weapon-status active" id="gamma-status">ACTIVE</div>
+              </div>
+              <div class="weapon-metric" id="gamma-count">0</div>
+              <div class="weapon-sub">Squeeze Opportunities</div>
+              <div class="opportunity-list" id="gamma-opportunities">
+                <div class="opp-item">
+                  <span class="opp-symbol">MONITORING...</span>
+                  <span class="opp-badge low">SCAN</span>
+                </div>
+              </div>
+            </div>
 
-        // Market Heatmap (bonus feature - accessible via console)
-        window.generateHeatmap = function() {
-            const coins = ['BTC', 'ETH', 'SOL', 'XRP', 'DOGE', 'ADA', 'AVAX', 'DOT', 'LINK', 'MATIC'];
-            const container = document.createElement('div');
-            container.className = 'fixed inset-0 z-50 bg-terminal-bg/95 p-8 grid grid-cols-5 gap-4';
-            container.innerHTML = '<div class="col-span-5 flex justify-between items-center mb-4"><h2 class="text-2xl font-bold text-white">Market Heatmap</h2><button onclick="this.parentElement.parentElement.remove()" class="text-gray-400 hover:text-white text-2xl">×</button></div>';
-            
-            coins.forEach(coin => {
-                const change = (Math.random() * 20 - 10);
-                const size = Math.abs(change) * 10 + 50;
-                const div = document.createElement('div');
-                div.className = `heatmap-cell rounded-xl p-4 flex flex-col justify-between ${change >= 0 ? 'bg-terminal-success/20 border border-terminal-success/50' : 'bg-terminal-danger/20 border border-terminal-danger/50'}`;
-                div.style.height = `${size}%`;
-                div.innerHTML = `
-                    <div class="text-lg font-bold text-white">${coin}</div>
-                    <div class="text-2xl font-mono ${change >= 0 ? 'text-terminal-success' : 'text-terminal-danger'}">${change >= 0 ? '+' : ''}${change.toFixed(2)}%</div>
-                `;
-                container.appendChild(div);
-            });
-            
-            document.body.appendChild(container);
-        };
-    </script>
+            <!-- Toxicity Detector -->
+            <div class="weapon-card toxic">
+              <div class="weapon-header">
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <div class="ic amber"><svg viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg></div>
+                  <div class="weapon-title">Toxicity Detector</div>
+                </div>
+                <div class="weapon-status active" id="toxicity-status">CLEAN</div>
+              </div>
+              <div class="weapon-metric" id="toxicity-alerts">0</div>
+              <div class="weapon-sub">Active Alerts</div>
+              <div class="opportunity-list" id="toxicity-readings">
+                <div class="opp-item">
+                  <span class="opp-symbol">ANALYZING...</span>
+                  <span class="opp-badge low">FLOW</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="cd ch-cd">
+          <div class="ch-hd">
+            <div class="ch-left">
+              <div class="ic cy"><svg viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="1.5" stroke-linecap="round"><path d="M3 3v18h18"/><path d="M18 9l-5 5-2-2-4 4"/></svg></div>
+              <div>
+                <div class="c-l" style="margin-bottom:2px;">Performance Trend</div>
+                <div class="ch-val" id="performance-value">+$0.00 <span>realized (10D)</span></div>
+              </div>
+            </div>
+            <div class="ch-tabs">
+              <button class="ct">1D</button><button class="ct on">7D</button><button class="ct">30D</button><button class="ct">90D</button><button class="ct">All</button>
+            </div>
+          </div>
+          <div class="ch-area"><canvas id="plC"></canvas></div>
+        </div>
+
+        <div class="cd sys">
+          <div class="sy">
+            <div class="sy-hd">
+              <div class="ic gn"><svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" width="16" height="16"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+              <div><div class="sy-t">System Calm</div><div style="font-size:10px;color:var(--t3);font-weight:400;">No urgent issues</div></div>
+            </div>
+            <div class="sy-grid">
+              <div class="sy-c"><div class="sy-cl">Bot</div><div class="sy-cv" style="color:var(--cyan);">Enabled</div></div>
+              <div class="sy-c"><div class="sy-cl">Shadow</div><div class="sy-cv" style="color:var(--green);">Scanning</div></div>
+              <div class="sy-c"><div class="sy-cl">Protection</div><div class="sy-cv" style="color:var(--green);">Confirmed</div></div>
+              <div class="sy-c"><div class="sy-cl">Alerts</div><div class="sy-cv" id="system-alerts">0</div></div>
+            </div>
+          </div>
+          <div class="sy" style="padding:16px 14px 14px;position:relative;overflow:visible;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+              <div style="font-family:'Zalando Sans Expanded';font-weight:200;font-size:14px;letter-spacing:0.8px;color:var(--t1);">Fear & Greed</div>
+              <div style="font-family:'Zalando Sans';font-size:9px;color:var(--t3);font-weight:300;font-style:italic;letter-spacing:0.5px;">Technimentals</div>
+            </div>
+            <div id="fgWrap" style="display:flex;flex-direction:column;align-items:center;"></div>
+          </div>
+        </div>
+
+        <div class="cd pos">
+          <div class="th"><div class="th-t">Active Positions</div><span class="th-b" id="positions-count">0 open</span></div>
+          <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -6px;padding:0 6px;">
+          <table style="min-width:580px;">
+            <thead><tr><th>Asset</th><th>Protection</th><th>Exposure</th><th>Qty</th><th>Strategy</th><th></th></tr></thead>
+            <tbody id="positions-table">
+              <tr><td colspan="6" style="text-align:center;color:var(--t3);">Loading positions...</td></tr>
+            </tbody>
+          </table>
+          </div>
+        </div>
+
+        <div class="cd act">
+          <div class="th"><div class="th-t">Quick Actions</div></div>
+          <div style="font-size:12px;color:var(--t3);font-weight:400;" id="action-status">System is scanning for alpha...</div>
+          <div class="act-g">
+            <button class="ab pri" onclick="triggerShadowScan()"><div class="ab-t">Scan Shadow Opportunities →</div><div class="ab-s">Detect missed alpha</div></button>
+            <button class="ab" onclick="triggerGammaCheck()"><div class="ab-t">Check Gamma Squeezes</div><div class="ab-s">Options flow analysis</div></button>
+            <button class="ab" onclick="triggerToxicityScan()"><div class="ab-t">Toxicity Scan</div><div class="ab-s">Smart money detection</div></button>
+            <button class="ab"><div class="ab-t">Risk & Protection</div><div class="ab-s">Safety checks</div></button>
+            <button class="ab"><div class="ab-t">Portfolio</div><div class="ab-s">Multi-venue holdings</div></button>
+          </div>
+          <div class="sr">
+            <div class="c-l">Active Strategies</div>
+            <div style="display:flex;align-items:center;gap:8px;margin-top:5px;">
+              <span style="font-family:'Zalando Sans Expanded';font-size:28px;font-weight:200;color:var(--cyan);letter-spacing:1px;" id="strategies-active-count">3</span>
+              <span style="font-size:12px;color:var(--t3);font-weight:400;">of 8 enabled</span>
+            </div>
+            <div class="sr-chips" id="strategies-chips">
+              <span class="sr-ch on">shadow_catch_up</span>
+              <span class="sr-ch on">gamma_proxy</span>
+              <span class="sr-ch on">toxicity_detector</span>
+              <span class="sr-ch">bollinger_bounce</span>
+              <span class="sr-ch">early_gainer</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="error-message" id="error-msg"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+// API Configuration - Updated for Railway deployment
+const API_BASE_URL = 'https://brain-pro-v2-production.up.railway.app';
+// Use this for local testing: const API_BASE_URL = 'http://localhost:5001';
+
+let chartInstance = null;
+
+// Initialize Chart
+function initChart() {
+  const ctx = document.getElementById('plC').getContext('2d');
+  const g = ctx.createLinearGradient(0,0,0,280);
+  g.addColorStop(0,'rgba(77,200,255,0.18)');
+  g.addColorStop(0.4,'rgba(77,200,255,0.06)');
+  g.addColorStop(1,'rgba(77,200,255,0)');
+
+  chartInstance = new Chart(ctx,{
+    type:'line',
+    data:{
+      labels:['Mar 10','Mar 11','Mar 12','Mar 13','Mar 14','Mar 15','Mar 16'],
+      datasets:[{
+        data:[0,0.8,1.2,1.0,2.5,3.8,4.52],
+        borderColor:'#4dc8ff',borderWidth:2,
+        backgroundColor:g,fill:true,tension:0.4,
+        pointRadius:0,pointHoverRadius:7,
+        pointHoverBackgroundColor:'#4dc8ff',
+        pointHoverBorderColor:'#161b2c',pointHoverBorderWidth:3,
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{
+        backgroundColor:'#242c44',titleColor:'#7d86a0',bodyColor:'#eaecf5',
+        borderColor:'rgba(77,200,255,0.08)',borderWidth:1,padding:12,cornerRadius:12,
+        titleFont:{family:"'Zalando Sans'",size:11,weight:300},
+        bodyFont:{family:"'JetBrains Mono'",size:14,weight:600},
+        callbacks:{label:c=>'$'+c.raw.toFixed(2)},
+        displayColors:false,
+      }},
+      scales:{
+        x:{grid:{color:'rgba(77,200,255,0.02)',drawBorder:false},ticks:{color:'#4e5772',font:{family:"'Zalando Sans'",size:11,weight:300}},border:{display:false}},
+        y:{grid:{color:'rgba(77,200,255,0.02)',drawBorder:false},ticks:{color:'#4e5772',font:{family:"'JetBrains Mono'",size:10,weight:300},callback:v=>'$'+v.toFixed(1)},border:{display:false}}
+      },
+      interaction:{intersect:false,mode:'index'},
+    }
+  });
+}
+
+function sp(id,d,col){
+  const c=document.getElementById(id);
+  if(!c)return;
+  c.innerHTML = '';
+  const mx=Math.max(...d);
+  d.forEach(v=>{
+    const b=document.createElement('div');
+    b.className='sp-b';
+    b.style.height=Math.max(3,(v/mx)*28)+'px';
+    b.style.background=col;
+    b.style.opacity=0.25+(v/mx)*0.65;
+    c.appendChild(b);
+  });
+}
+
+// Fear & Greed Gauge
+function drawFearGreed(value) {
+  const wrap = document.getElementById('fgWrap');
+  if(!wrap) return;
+  const frac = value / 100;
+  const C = {
+    strongBear:'#FF5656', bear:'#FF8888', bearish:'#FEE114',
+    bullish:'#D1D80F', bull:'#84BD32', strongBull:'#30AD43',
+    needle:'#525868', stroke:'rgba(255,255,255,0.18)',
+  };
+  const zoneData = [
+    {name:'Extreme Fear',min:0,max:16.7,color:C.strongBear},
+    {name:'Fear',min:16.7,max:33.3,color:C.bear},
+    {name:'Bearish',min:33.3,max:50,color:C.bearish},
+    {name:'Bullish',min:50,max:66.7,color:C.bullish},
+    {name:'Bull',min:66.7,max:83.3,color:C.bull},
+    {name:'Strong Bull',min:83.3,max:100,color:C.strongBull},
+  ];
+  const active = zoneData.find(z => value >= z.min && value < z.max) || zoneData[5];
+  const W = 210, H = 132, cx = W/2, cy = H - 3, outerR = 100, innerR = 84, fillR = innerR - 2;
+  
+  let s = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
+  s += `<defs><radialGradient id="ig" cx="50%" cy="95%" r="85%" fx="50%" fy="95%"><stop offset="0%" stop-color="#ffffff" stop-opacity="0.01"/><stop offset="30%" stop-color="#ffffff" stop-opacity="0.04"/><stop offset="55%" stop-color="${active.color}" stop-opacity="0.08"/><stop offset="80%" stop-color="${active.color}" stop-opacity="0.18"/><stop offset="100%" stop-color="${active.color}" stop-opacity="0.30"/></radialGradient></defs>`;
+  s += `<path d="M${cx-fillR},${cy} A${fillR},${fillR} 0 0,1 ${cx+fillR},${cy} Z" fill="url(#ig)"/>`;
+  const segAngle = Math.PI / 6;
+  zoneData.forEach((z, i) => {
+    const a1 = Math.PI - i * segAngle, a2 = Math.PI - (i + 1) * segAngle;
+    s += `<path d="M${cx+innerR*Math.cos(a1)},${cy-innerR*Math.sin(a1)} L${cx+outerR*Math.cos(a1)},${cy-outerR*Math.sin(a1)} A${outerR},${outerR} 0 0,1 ${cx+outerR*Math.cos(a2)},${cy-outerR*Math.sin(a2)} L${cx+innerR*Math.cos(a2)},${cy-innerR*Math.sin(a2)} A${innerR},${innerR} 0 0,0 ${cx+innerR*Math.cos(a1)},${cy-innerR*Math.sin(a1)} Z" fill="${z.color}"/>`;
+  });
+  [[.083,'STRONG','BEAR'],[.25,'BEAR',null],[.417,'BEARISH',null],[.583,'BULLISH',null],[.75,'BULL',null],[.917,'STRONG','BULL']].forEach(([mf,l1,l2])=>{
+    const a = Math.PI * (1 - mf), lr = outerR + 14, lx = cx + lr * Math.cos(a), ly = cy - lr * Math.sin(a), fill = '#8a92a8';
+    if(l2){s += `<text x="${lx}" y="${ly-3}" text-anchor="middle" fill="${fill}" font-family="'Zalando Sans Condensed',sans-serif" font-weight="400" font-size="6.5" letter-spacing="0.2"><tspan x="${lx}" dy="0">${l1}</tspan><tspan x="${lx}" dy="8">${l2}</tspan></text>`;}
+    else {s += `<text x="${lx}" y="${ly+2}" text-anchor="middle" fill="${fill}" font-family="'Zalando Sans Condensed',sans-serif" font-weight="400" font-size="6.5" letter-spacing="0.2">${l1}</text>`;}
+  });
+  const nA = Math.PI * (1 - frac), nLen = innerR - 4, tx = cx + nLen * Math.cos(nA), ty = cy - nLen * Math.sin(nA), pA = nA + Math.PI / 2;
+  s += `<polygon points="${cx+5*Math.cos(pA)},${cy-5*Math.sin(pA)} ${tx+.3*Math.cos(pA)},${ty-.3*Math.sin(pA)} ${tx-.3*Math.cos(pA)},${ty+.3*Math.sin(pA)} ${cx-5*Math.cos(pA)},${cy+5*Math.sin(pA)}" fill="${C.needle}"/>`;
+  s += `<circle cx="${cx}" cy="${cy}" r="9" fill="${C.needle}" stroke="${C.stroke}" stroke-width="2.5"/>`;
+  s += `</svg>`;
+  s += `<div style="display:flex;align-items:center;gap:10px;margin-top:10px;"><span style="font-family:'JetBrains Mono',monospace;font-size:34px;font-weight:600;color:${active.color};letter-spacing:-1.5px;line-height:1;">${value}</span><div style="display:flex;flex-direction:column;gap:1px;"><span style="font-family:'Zalando Sans Expanded',sans-serif;font-size:14px;font-weight:200;color:${active.color};letter-spacing:0.8px;">${active.name}</span><span style="font-family:'Zalando Sans Condensed';font-size:9.5px;color:var(--t3);font-weight:400;letter-spacing:1px;text-transform:uppercase;">Fear & Greed Index</span></div></div>`;
+  wrap.innerHTML = s;
+}
+
+// Fetch Alpha Data from Secret Weapons API
+async function fetchAlphaData() {
+  try {
+    document.body.classList.add('loading');
+    
+    const response = await fetch(`${API_BASE_URL}/api/alpha`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    
+    const data = await response.json();
+    updateDashboard(data);
+    
+    document.getElementById('error-msg').style.display = 'none';
+  } catch (error) {
+    console.error('❌ API Error:', error);
+    document.getElementById('error-msg').textContent = `Connection error: ${error.message}. Using fallback data.`;
+    document.getElementById('error-msg').style.display = 'block';
+    
+    // Use fallback data for demo
+    updateDashboard({
+      portfolio_value: 2844,
+      shadow_catch_up: { missed_alpha_24h: 76.80, opportunities: [
+        {symbol: 'LRC', discount: 1.2, confidence: 0.85, urgency: 'high', catch_up_potential: 2.4},
+        {symbol: 'THETA', discount: 0.8, confidence: 0.72, urgency: 'medium', catch_up_potential: 1.3}
+      ]},
+      gamma_proxy: { squeezes_detected: 1, opportunities: [
+        {symbol: 'BTC', direction: 'up', probability: 0.75, intensity: 0.8}
+      ]},
+      toxicity_detector: { alerts: 0, readings: [] },
+      kelly_sizing: { half_kelly: 12.5, recommended: 'half_kelly' }
+    });
+  } finally {
+    document.body.classList.remove('loading');
+  }
+}
+
+// Update Dashboard with Secret Weapons Data
+function updateDashboard(data) {
+  // Update Hero
+  if (data.portfolio_value) {
+    document.getElementById('hero-equity').textContent = '$' + data.portfolio_value.toLocaleString();
+    document.getElementById('tk-equity').textContent = '$' + data.portfolio_value.toLocaleString();
+  }
+  
+  // Update Shadow Catch-Up
+  if (data.shadow_catch_up) {
+    const missed = data.shadow_catch_up.missed_alpha_24h || 0;
+    document.getElementById('shadow-missed').textContent = '$' + missed.toFixed(2);
+    document.getElementById('shadow-missed-card').textContent = '$' + missed.toFixed(2);
+    document.getElementById('tk-alpha').textContent = '+$' + missed.toFixed(2);
+    document.getElementById('tk-shadow').textContent = data.shadow_catch_up.opportunities.length + ' opp';
+    
+    // Update opportunities list
+    const oppContainer = document.getElementById('shadow-opportunities');
+    if (data.shadow_catch_up.opportunities.length > 0) {
+      oppContainer.innerHTML = data.shadow_catch_up.opportunities.slice(0, 3).map(opp => `
+        <div class="opp-item">
+          <span class="opp-symbol">${opp.symbol}</span>
+          <span style="font-family:'JetBrains Mono';font-size:11px;color:var(--cyan);">-${opp.discount}%</span>
+          <span class="opp-badge ${opp.urgency}">${opp.urgency}</span>
+          <button onclick="executeCatchUp('${opp.symbol}')" style="background:var(--green-dim);color:var(--green);border:none;padding:4px 10px;border-radius:6px;font-size:9px;cursor:pointer;font-weight:600;">CATCH</button>
+        </div>
+      `).join('');
+    } else {
+      oppContainer.innerHTML = '<div class="opp-item"><span class="opp-symbol">No opportunities</span><span class="opp-badge low">WAIT</span></div>';
+    }
+  }
+  
+  // Update Gamma Proxy
+  if (data.gamma_proxy) {
+    document.getElementById('gamma-count').textContent = data.gamma_proxy.squeezes_detected;
+    const gammaContainer = document.getElementById('gamma-opportunities');
+    
+    if (data.gamma_proxy.opportunities.length > 0) {
+      document.getElementById('gamma-status').textContent = 'ALERT';
+      document.getElementById('gamma-status').className = 'weapon-status alert';
+      gammaContainer.innerHTML = data.gamma_proxy.opportunities.map(sq => `
+        <div class="opp-item">
+          <span class="opp-symbol">${sq.symbol}</span>
+          <span style="font-family:'JetBrains Mono';font-size:11px;color:var(--purple);">${sq.direction.toUpperCase()}</span>
+          <span class="opp-badge ${sq.probability > 0.7 ? 'high' : 'medium'}">${(sq.probability * 100).toFixed(0)}%</span>
+        </div>
+      `).join('');
+    } else {
+      document.getElementById('gamma-status').textContent = 'SCANNING';
+      gammaContainer.innerHTML = '<div class="opp-item"><span class="opp-symbol">No squeezes detected</span><span class="opp-badge low">CALM</span></div>';
+    }
+  }
+  
+  // Update Toxicity
+  if (data.toxicity_detector) {
+    document.getElementById('toxicity-alerts').textContent = data.toxicity_detector.alerts;
+    document.getElementById('system-alerts').textContent = data.toxicity_detector.alerts;
+    const toxicContainer = document.getElementById('toxicity-readings');
+    
+    if (data.toxicity_detector.alerts > 0 && data.toxicity_detector.readings.length > 0) {
+      document.getElementById('toxicity-status').textContent = 'TOXIC';
+      document.getElementById('toxicity-status').className = 'weapon-status alert';
+      document.getElementById('tk-toxicity').textContent = 'TOXIC';
+      document.getElementById('tk-toxicity').className = 'tk-n';
+      
+      toxicContainer.innerHTML = data.toxicity_detector.readings.filter(r => r.alert).slice(0, 2).map(r => `
+        <div class="opp-item">
+          <span class="opp-symbol">${r.symbol}</span>
+          <span style="font-family:'JetBrains Mono';font-size:11px;color:var(--amber);">VPIN ${r.vpin}</span>
+          <span class="opp-badge high">ALERT</span>
+        </div>
+      `).join('');
+    } else {
+      document.getElementById('toxicity-status').textContent = 'CLEAN';
+      document.getElementById('toxicity-status').className = 'weapon-status active';
+      document.getElementById('tk-toxicity').textContent = 'Clean';
+      document.getElementById('tk-toxicity').className = 'tk-v';
+      toxicContainer.innerHTML = '<div class="opp-item"><span class="opp-symbol">Flow is clean</span><span class="opp-badge low">SAFE</span></div>';
+    }
+  }
+  
+  // Update Positions
+  if (data.positions) {
+    document.getElementById('hero-positions').textContent = data.positions.length;
+    document.getElementById('positions-count').textContent = data.positions.length + ' open';
+    
+    const tbody = document.getElementById('positions-table');
+    tbody.innerHTML = data.positions.map(pos => `
+      <tr>
+        <td><div class="co"><div class="co-i">${pos.symbol.substring(0,3)}</div><div class="co-n">${pos.symbol}</div></div></td>
+        <td><span class="prot prot-ok">SL ✓ TP ✓</span></td>
+        <td class="td-m">$${pos.value.toFixed(2)}</td>
+        <td class="td-m">-</td>
+        <td><span class="st-c">${pos.venue || 'alpha'}</span></td>
+        <td><div class="ar-sm"><svg viewBox="0 0 24 24" fill="none" stroke="var(--t2)" stroke-width="2"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></div></td>
+      </tr>
+    `).join('');
+  }
+  
+  // Update Action Status
+  document.getElementById('action-status').textContent = `Last updated: ${new Date().toLocaleTimeString()}`;
+}
+
+// Action Handlers
+async function executeCatchUp(symbol) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/shadow/catch`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({symbol: symbol})
+    });
+    const result = await response.json();
+    alert(`Shadow Catch-Up executed for ${symbol}!\nExpected profit: ${result.expected_profit}%`);
+  } catch (error) {
+    alert('Failed to execute catch-up. Check connection.');
+  }
+}
+
+function triggerShadowScan() {
+  fetchAlphaData();
+  document.getElementById('action-status').textContent = 'Scanning Shadow opportunities...';
+}
+
+function triggerGammaCheck() {
+  document.getElementById('action-status').textContent = 'Checking Gamma exposure...';
+  setTimeout(() => fetchAlphaData(), 1000);
+}
+
+function triggerToxicityScan() {
+  document.getElementById('action-status').textContent = 'Analyzing order flow toxicity...';
+  setTimeout(() => fetchAlphaData(), 1000);
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+  initChart();
+  sp('s1',[55,62,68,75,82,88,92,96,100,100],'#4dc8ff');
+  sp('s2',[2.5,2,1.5,1,0.5,0.2,0,0,0,0],'rgba(255,255,255,0.08)');
+  drawFearGreed(23);
+  
+  // Fetch data immediately and every 10 seconds
+  fetchAlphaData();
+  setInterval(fetchAlphaData, 10000);
+});
+
+function toggleSb(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sbOverlay').classList.toggle('show');
+}
+</script>
 </body>
 </html>
