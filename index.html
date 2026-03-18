@@ -836,3 +836,22 @@ function toggleSb(){
 </script>
 </body>
 </html>
+.cd:hover { /* Cards lift up with glow */
+  box-shadow: 7px 7px 20px var(--sh-d), -3px -3px 12px var(--sh-l), 0 0 35px rgba(77,200,255,0.04);
+  transform: translateY(-2px);
+}
+
+.weapon-card:hover { /* Alpha weapons glow */
+  border-color: rgba(77,200,255,0.1);
+  box-shadow: var(--sh-glow), 0 0 30px rgba(77,200,255,0.08);
+}
+
+.ar:hover { /* Round arrows scale up */
+  transform: scale(1.06);
+  box-shadow: 5px 5px 14px var(--sh-d);
+}
+
+.ab:hover { /* Action buttons lift */
+  transform: translateY(-1px);
+  box-shadow: 7px 7px 18px var(--sh-d);
+}
