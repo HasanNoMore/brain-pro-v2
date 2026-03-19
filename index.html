@@ -546,9 +546,12 @@ tbody tr:hover td:last-child{border-radius:0 12px 12px 0;}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-// API Configuration - Updated for Railway deployment
-const API_BASE_URL = 'https://brain-pro-v2-production.up.railway.app';
-// Use this for local testing: const API_BASE_URL = 'http://localhost:5001';
+// API Configuration - auto-detect environment
+const _isLocal = ['localhost', '127.0.0.1', '0.0.0.0'].includes(window.location.hostname)
+  || window.location.hostname.startsWith('127.');
+const API_BASE_URL = _isLocal
+  ? `http://${window.location.hostname}:5001`
+  : 'https://brain-pro-v2-production.up.railway.app';
 
 let chartInstance = null;
 
