@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diamond Hunter | The Brain</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zalando+Sans+Expanded:ital,wght@0,200..900;1,200..900&family=Zalando+Sans:ital,wght@0,200..900;1,200..900&family=Zalando+Sans+Condensed:ital,wght@0,200..900;1,200..900&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --base: #161b2c;
+  --base-deep: #111520;
+  --card: #1e2438;
+  --card-top: #242c44;
+  --elevated: #2a3350;
+  --elevated-top: #313b5c;
+  --primary: #4a7bff;
+  --primary-dim: rgba(74,123,255,0.15);
+  --cyan: #4dc8ff;
+  --blue: #6688f0;
+  --indigo: #7578f5;
+  --purple: #918af5;
+  --green: #50e0aa;
+  --green-dim: rgba(80,224,170,0.10);
+  --red: #f57070;
+  --red-dim: rgba(245,112,112,0.10);
+  --amber: #f5c44e;
+  --amber-dim: rgba(245,196,78,0.10);
+  --t1: #eaecf5;
+  --t2: #7d86a0;
+  --t3: #4e5772;
+  --sh-d: rgba(6,8,20,0.45);
+  --sh-l: rgba(255,255,255,0.025);
+  --sh-card: 5px 5px 14px var(--sh-d), -2px -2px 8px var(--sh-l);
+  --sh-raised: 3px 3px 10px var(--sh-d), -1px -1px 6px var(--sh-l);
+  --sh-inset: inset 2px 2px 6px var(--sh-d), inset -1px -1px 4px var(--sh-l);
+  --sh-btn: 3px 3px 8px var(--sh-d), -1px -1px 5px var(--sh-l);
+  --sh-glow: var(--sh-card), 0 0 30px rgba(77,200,255,0.04);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--base);color:var(--t1);font-family:'Zalando Sans',sans-serif;min-height:100vh;font-weight:300;}
+.shell{display:flex;min-height:100vh;}
+.sb{width:230px;background:var(--base-deep);padding:22px 14px;display:flex;flex-direction:column;gap:2px;position:fixed;top:0;left:0;bottom:0;z-index:50;border-right:1px solid rgba(245,196,78,0.08);transition:all 0.3s;}
+.sb.collapsed{width:70px;padding:24px 12px;}
+.sb-brand{display:flex;align-items:center;gap:12px;padding:8px 12px 28px;margin-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.05);position:relative;}
+.sb-ico{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,var(--amber),#f5a742);box-shadow:0 0 24px rgba(227,179,65,0.3);display:flex;align-items:center;justify-content:center;font-family:'Zalando Sans Expanded';font-weight:800;font-size:18px;color:var(--base-deep);flex-shrink:0;}
+.sb-brand-text{transition:opacity 0.2s;}
+.sb.collapsed .sb-brand-text{opacity:0;width:0;overflow:hidden;}
+.sb-name{font-family:'Zalando Sans Expanded';font-weight:200;font-size:18px;}
+.sb-sub{font-family:'Zalando Sans Condensed';font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:2.5px;}
+.sb-toggle{position:absolute;right:-12px;top:50%;transform:translateY(-50%);width:24px;height:24px;border-radius:50%;background:var(--card);border:1px solid rgba(227,179,65,0.3);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;z-index:10;}
+.sb-toggle:hover{background:var(--elevated);border-color:var(--amber);}
+.sb-toggle svg{width:12px;height:12px;stroke:var(--t3);transition:transform 0.3s;}
+.sb.collapsed .sb-toggle svg{transform:rotate(180deg);}
+.nv-label{font-family:'Zalando Sans Condensed';font-size:9px;text-transform:uppercase;letter-spacing:2.5px;color:var(--t3);padding:20px 12px 8px;}
+.sb.collapsed .nv-label{opacity:0;height:0;padding:8px 0;overflow:hidden;}
+.nv{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:12px;font-size:14px;color:var(--t2);cursor:pointer;transition:all 0.2s;text-decoration:none;}
+.nv:hover{color:var(--t1);background:rgba(255,255,255,0.03);}
+.nv.on{color:var(--amber);background:linear-gradient(135deg,rgba(227,179,65,0.1),rgba(245,167,66,0.05));box-shadow:var(--sh-card),inset 0 0 0 1px rgba(227,179,65,0.1);}
+.nv svg{width:18px;height:18px;opacity:0.5;flex-shrink:0;stroke-width:1.5;}
+.nv.on svg{opacity:1;stroke:var(--amber);}
+.nv-text{transition:opacity 0.2s;}
+.sb.collapsed .nv-text{opacity:0;width:0;overflow:hidden;}
+.sb-ft{margin-top:auto;padding:16px 12px;border-top:1px solid rgba(255,255,255,0.05);display:flex;gap:8px;flex-wrap:wrap;}
+.sb.collapsed .sb-ft{flex-direction:column;align-items:center;}
+.cn{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--t2);font-family:'JetBrains Mono';padding:6px 12px;border-radius:10px;background:var(--card);}
+.sb.collapsed .cn{padding:6px;}
+.sb.collapsed .cn span{display:none;}
+.cn-d{width:6px;height:6px;border-radius:50%;background:var(--green);}
+.mn{flex:1;margin-left:230px;display:flex;flex-direction:column;transition:margin-left 0.3s;}
+.sb.collapsed + .mn{margin-left:70px;}
+.tb{height:60px;background:var(--base-deep);display:flex;align-items:center;padding:0 28px;gap:18px;position:sticky;top:0;z-index:40;border-bottom:1px solid rgba(227,179,65,0.1);}
+.tb-live{display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono';font-size:11px;color:var(--amber);background:linear-gradient(135deg,rgba(227,179,65,0.15),rgba(245,167,66,0.08));padding:6px 16px;border-radius:20px;}
+.tb-dot{width:7px;height:7px;border-radius:50%;background:var(--amber);animation:pulse 2.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.35;}}
+.tb-b{font-family:'Zalando Sans';font-size:13px;padding:10px 20px;border-radius:12px;border:none;background:var(--elevated);color:var(--t2);cursor:pointer;}
+.pg{padding:28px;flex:1;}
+.pg-t{font-family:'Zalando Sans Expanded';font-size:30px;font-weight:200;margin-bottom:4px;}
+.pg-s{font-size:15px;color:var(--t2);margin-bottom:28px;}
+.bt{display:grid;grid-template-columns:repeat(12,1fr);gap:20px;}
+.cd{background:linear-gradient(165deg,var(--card-top),var(--card));border-radius:20px;padding:24px;box-shadow:var(--sh-glow);border:1px solid rgba(227,179,65,0.08);}
+.c-l{font-family:'Zalando Sans Condensed';font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--t3);}
+
+/* Stats - NO GREEN BACKGROUND */
+.stats{grid-column:span 12;display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+.stat-card{padding:22px;}
+.stat-value{font-family:'JetBrains Mono';font-size:32px;margin-top:10px;}
+.stat-change{font-size:14px;margin-top:6px;color:var(--t2);}
+
+.diamonds-list{grid-column:span 12;}
+.filter-bar{display:flex;gap:12px;margin-bottom:18px;}
+.filter-btn{padding:10px 18px;border-radius:12px;border:1px solid rgba(255,255,255,0.06);background:var(--elevated);color:var(--t2);font-size:13px;cursor:pointer;transition:all 0.2s;}
+.filter-btn.active{background:rgba(227,179,65,0.12);color:var(--amber);border-color:rgba(227,179,65,0.2);}
+table{width:100%;border-collapse:separate;border-spacing:0 4px;}
+thead th{text-align:left;font-family:'Zalando Sans Condensed';font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--t3);padding:12px 14px;}
+tbody td{padding:16px 14px;font-size:15px;background:transparent;}
+tbody tr{background:var(--elevated);border-radius:12px;}
+tbody tr:hover{background:rgba(227,179,65,0.08);}
+.co{display:flex;align-items:center;gap:12px;}
+.co-i{width:40px;height:40px;border-radius:10px;background:rgba(227,179,65,0.12);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono';font-size:12px;font-weight:600;color:var(--amber);}
+.co-n{font-family:'JetBrains Mono';font-weight:500;font-size:15px;}
+.score{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:20px;background:rgba(63,185,80,0.1);color:var(--green);font-family:'JetBrains Mono';font-size:13px;font-weight:600;}
+.btn-buy{padding:10px 20px;border-radius:10px;border:none;background:var(--green);color:#fff;font-family:'JetBrains Mono';font-size:12px;font-weight:600;cursor:pointer;box-shadow:0 4px 16px rgba(63,185,80,0.4);transition:all 0.2s;}
+.btn-buy:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(63,185,80,0.5);}
+</style>
+</head>
+<body>
+<div class="shell">
+  <nav class="sb" id="sidebar">
+    <div class="sb-brand">
+      <div class="sb-ico">B</div>
+      <div class="sb-brand-text">
+        <div class="sb-name">The Brain</div>
+        <div class="sb-sub">Spot Only • No Leverage</div>
+      </div>
+      <div class="sb-toggle" onclick="toggleSidebar()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+      </div>
+    </div>
+    <div class="nv-label">Monitor</div>
+    <a class="nv" href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="4" rx="2"/><rect x="14" y="10" width="7" height="7" rx="2"/><rect x="3" y="13" width="7" height="4" rx="2"/></svg><span class="nv-text">Command Center</span></a>
+    <a class="nv" href="portfolio.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/></svg><span class="nv-text">Portfolio</span></a>
+    <a class="nv" href="signals.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg><span class="nv-text">Signals</span></a>
+    <div class="nv-label">Alpha</div>
+    <a class="nv on" href="diamonds.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><path d="M8 12a4 4 0 0 1 8 0"/></svg><span class="nv-text">Diamond Hunter</span></a>
+    <a class="nv" href="sniper.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2a8 8 0 0 0-8 8c0 3.4 2.1 6.2 5 7.4V19a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1.6c2.9-1.2 5-4 5-7.4a8 8 0 0 0-8-8z"/></svg><span class="nv-text">Sniper Entry</span></a>
+    <div class="sb-ft">
+      <div class="cn"><div class="cn-d"></div><span>Bybit</span></div>
+      <div class="cn"><div class="cn-d"></div><span>Binance</span></div>
+    </div>
+  </nav>
+
+  <div class="mn">
+    <header class="tb">
+      <div class="tb-live"><div class="tb-dot"></div>DIAMOND HUNTER</div>
+      <div style="margin-left:auto;"><a href="login.html" class="tb-b" style="text-decoration:none;">Logout</a></div>
+    </header>
+
+    <div class="pg">
+      <h1 class="pg-t">Diamond Hunter</h1>
+      <p class="pg-s">Discover undervalued gems with strong fundamentals</p>
+
+      <div class="bt">
+        <div class="stats">
+          <div class="cd stat-card">
+            <div class="c-l">Diamonds Found</div>
+            <div class="stat-value" style="color:var(--amber);">12</div>
+            <div class="stat-change">This week</div>
+          </div>
+          <div class="cd stat-card">
+            <div class="c-l">Avg Score</div>
+            <div class="stat-value" style="color:var(--green);">87.5</div>
+            <div class="stat-change">Out of 100</div>
+          </div>
+          <div class="cd stat-card">
+            <div class="c-l">Avg Return</div>
+            <div class="stat-value" style="color:var(--green);">+18.3%</div>
+            <div class="stat-change">30-day performance</div>
+          </div>
+          <div class="cd stat-card">
+            <div class="c-l">Win Rate</div>
+            <div class="stat-value" style="color:var(--amber);">71.2%</div>
+            <div class="stat-change">Historical</div>
+          </div>
+        </div>
+
+        <div class="cd diamonds-list">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+            <div class="c-l">Potential Diamonds</div>
+            <div class="filter-bar">
+              <button class="filter-btn active">All</button>
+              <button class="filter-btn">Top 100</button>
+              <button class="filter-btn">Mid Cap</button>
+              <button class="filter-btn">Low Cap</button>
+            </div>
+          </div>
+          <table>
+            <thead>
+              <tr><th>Asset</th><th>Price</th><th>RSI</th><th>Market Cap</th><th>Volume</th><th>Score</th><th>Action</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><div class="co"><div class="co-i">LINK</div><div class="co-n">Chainlink</div></div></td>
+                <td>$19.42</td>
+                <td style="color:var(--amber);">34.2</td>
+                <td>$12.1B</td>
+                <td>$485M</td>
+                <td><span class="score">92/100</span></td>
+                <td><button class="btn-buy">BUY</button></td>
+              </tr>
+              <tr>
+                <td><div class="co"><div class="co-i">UNI</div><div class="co-n">Uniswap</div></div></td>
+                <td>$8.75</td>
+                <td style="color:var(--amber);">31.8</td>
+                <td>$5.2B</td>
+                <td>$156M</td>
+                <td><span class="score">89/100</span></td>
+                <td><button class="btn-buy">BUY</button></td>
+              </tr>
+              <tr>
+                <td><div class="co"><div class="co-i">AAVE</div><div class="co-n">Aave</div></div></td>
+                <td>$142.30</td>
+                <td style="color:var(--amber);">28.5</td>
+                <td>$2.1B</td>
+                <td>$89M</td>
+                <td><span class="score">87/100</span></td>
+                <td><button class="btn-buy">BUY</button></td>
+              </tr>
+              <tr>
+                <td><div class="co"><div class="co-i">MKR</div><div class="co-n">Maker</div></div></td>
+                <td>$1,245.00</td>
+                <td style="color:var(--amber);">33.1</td>
+                <td>$1.1B</td>
+                <td>$45M</td>
+                <td><span class="score">85/100</span></td>
+                <td><button class="btn-buy">BUY</button></td>
+              </tr>
+              <tr>
+                <td><div class="co"><div class="co-i">SNX</div><div class="co-n">Synthetix</div></div></td>
+                <td>$2.15</td>
+                <td style="color:var(--amber);">29.7</td>
+                <td>$685M</td>
+                <td>$32M</td>
+                <td><span class="score">82/100</span></td>
+                <td><button class="btn-buy">BUY</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('collapsed');
+}
+</script>
+</body>
+</html>

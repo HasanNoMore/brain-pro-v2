@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login | The Brain — Secure Access</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zalando+Sans+Expanded:ital,wght@0,200..900;1,200..900&family=Zalando+Sans:ital,wght@0,200..900;1,200..900&family=Zalando+Sans+Condensed:ital,wght@0,200..900;1,200..900&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --base: #161b2c;
+  --base-deep: #111520;
+  --card: #1e2438;
+  --card-top: #242c44;
+  --elevated: #2a3350;
+  --elevated-top: #313b5c;
+  --primary: #4a7bff;
+  --primary-dim: rgba(74,123,255,0.15);
+  --cyan: #4dc8ff;
+  --blue: #6688f0;
+  --indigo: #7578f5;
+  --purple: #918af5;
+  --green: #50e0aa;
+  --green-dim: rgba(80,224,170,0.10);
+  --red: #f57070;
+  --red-dim: rgba(245,112,112,0.10);
+  --amber: #f5c44e;
+  --amber-dim: rgba(245,196,78,0.10);
+  --t1: #eaecf5;
+  --t2: #7d86a0;
+  --t3: #4e5772;
+  --sh-d: rgba(6,8,20,0.45);
+  --sh-l: rgba(255,255,255,0.025);
+  --sh-card: 5px 5px 14px var(--sh-d), -2px -2px 8px var(--sh-l);
+  --sh-raised: 3px 3px 10px var(--sh-d), -1px -1px 6px var(--sh-l);
+  --sh-inset: inset 2px 2px 6px var(--sh-d), inset -1px -1px 4px var(--sh-l);
+  --sh-btn: 3px 3px 8px var(--sh-d), -1px -1px 5px var(--sh-l);
+  --sh-glow: var(--sh-card), 0 0 30px rgba(77,200,255,0.04);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--base);color:var(--t1);font-family:'Zalando Sans',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow-x:hidden;font-weight:300;}
+.bg-grid{position:fixed;top:0;left:0;right:0;bottom:0;background-image:radial-gradient(circle at 2px 2px,rgba(88,166,255,0.03) 1px,transparent 1px);background-size:32px 32px;pointer-events:none;}
+.bg-glow{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:800px;height:800px;background:radial-gradient(circle,rgba(88,166,255,0.08) 0%,transparent 60%);pointer-events:none;}
+.login-container{width:100%;max-width:440px;padding:20px;position:relative;z-index:10;}
+.logo{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:44px;}
+.logo-ico{width:60px;height:60px;border-radius:16px;background:linear-gradient(135deg,var(--primary),#79c0ff);box-shadow:0 0 36px rgba(88,166,255,0.35);display:flex;align-items:center;justify-content:center;font-family:'Zalando Sans Expanded';font-weight:800;font-size:24px;color:var(--base-deep);}
+.logo-text{text-align:left;}
+.logo-name{font-family:'Zalando Sans Expanded';font-weight:200;font-size:24px;}
+.logo-sub{font-family:'Zalando Sans Condensed';font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:3px;margin-top:2px;}
+.card{background:linear-gradient(165deg,var(--card-top) 0%,var(--card) 100%);border-radius:24px;padding:36px;box-shadow:var(--sh-glow);border:1px solid rgba(88,166,255,0.1);position:relative;}
+.header{text-align:center;margin-bottom:32px;}
+.header h1{font-family:'Zalando Sans Expanded';font-size:26px;font-weight:200;margin-bottom:8px;}
+.header p{font-size:15px;color:var(--t2);}
+.security-layers{display:flex;justify-content:center;gap:10px;margin-bottom:28px;}
+.layer{width:44px;height:5px;border-radius:3px;background:var(--elevated);transition:all 0.3s;}
+.layer.active{background:var(--primary);box-shadow:0 0 10px rgba(88,166,255,0.5);}
+.layer.verified{background:var(--green);box-shadow:0 0 10px rgba(63,185,80,0.4);}
+.form-group{margin-bottom:20px;}
+.label{display:block;font-family:'Zalando Sans Condensed';font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--t3);margin-bottom:10px;}
+.input-wrap{position:relative;}
+.input{width:100%;background:var(--elevated);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:16px 18px 16px 48px;color:var(--t1);font-family:'Zalando Sans';font-size:16px;transition:all 0.2s;}
+.input:focus{outline:none;border-color:rgba(88,166,255,0.3);background:var(--elevated-top);}
+.input::placeholder{color:var(--t3);}
+.input-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);opacity:0.5;}
+.password-strength{display:flex;align-items:center;gap:10px;margin-top:10px;}
+.strength-bar{flex:1;height:5px;border-radius:3px;background:var(--elevated);overflow:hidden;}
+.strength-fill{height:100%;width:0%;border-radius:3px;transition:all 0.3s;}
+.strength-fill.weak{width:33%;background:var(--red);}
+.strength-fill.medium{width:66%;background:var(--amber);}
+.strength-fill.strong{width:100%;background:var(--green);}
+.strength-text{font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;}
+.options{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;}
+.checkbox{display:flex;align-items:center;gap:10px;cursor:pointer;}
+.checkbox input{display:none;}
+.checkmark{width:20px;height:20px;border-radius:8px;background:var(--elevated);border:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+.checkbox input:checked + .checkmark{background:var(--primary);border-color:var(--primary);}
+.checkbox input:checked + .checkmark::after{content:'✓';font-size:12px;color:#fff;}
+.checkbox span{font-size:14px;color:var(--t2);}
+.forgot{font-size:14px;color:var(--primary);text-decoration:none;}
+.btn{width:100%;padding:18px;border-radius:14px;border:none;background:linear-gradient(135deg,var(--primary),#79c0ff);color:#fff;font-family:'Zalando Sans';font-size:16px;font-weight:500;cursor:pointer;box-shadow:0 4px 24px rgba(88,166,255,0.4);transition:all 0.2s;}
+.btn:hover{transform:translateY(-2px);box-shadow:0 6px 32px rgba(88,166,255,0.5);}
+.btn:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
+.divider{display:flex;align-items:center;gap:18px;margin:28px 0;}
+.divider-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.08),transparent);}
+.divider-text{font-size:12px;color:var(--t3);text-transform:uppercase;letter-spacing:2px;}
+.social-login{display:flex;gap:14px;}
+.social-btn{flex:1;padding:14px;border-radius:14px;border:1px solid rgba(255,255,255,0.06);background:var(--elevated);color:var(--t2);font-family:'Zalando Sans';font-size:14px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:10px;}
+.social-btn:hover{background:var(--elevated-top);border-color:rgba(88,166,255,0.15);color:var(--t1);}
+.footer{text-align:center;margin-top:28px;}
+.footer p{font-size:14px;color:var(--t3);}
+.footer a{color:var(--primary);text-decoration:none;}
+.security-badges{display:flex;justify-content:center;gap:24px;margin-top:28px;}
+.badge{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--t3);}
+.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(10px);z-index:100;align-items:center;justify-content:center;}
+.modal-overlay.show{display:flex;}
+.modal{background:linear-gradient(165deg,var(--card-top),var(--card));border-radius:20px;padding:32px;width:90%;max-width:380px;border:1px solid rgba(88,166,255,0.15);box-shadow:var(--sh-glow);text-align:center;}
+.modal-icon{width:60px;height:60px;border-radius:50%;background:var(--primary-dim);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;}
+.modal h3{font-family:'Zalando Sans Expanded';font-size:20px;margin-bottom:10px;}
+.modal p{font-size:14px;color:var(--t2);margin-bottom:24px;}
+.code-inputs{display:flex;gap:10px;justify-content:center;margin-bottom:24px;}
+.code-input{width:48px;height:56px;border-radius:12px;background:var(--elevated);border:1px solid rgba(255,255,255,0.06);color:var(--t1);font-family:'JetBrains Mono';font-size:22px;text-align:center;}
+.code-input:focus{outline:none;border-color:var(--primary);background:var(--elevated-top);}
+.modal-btn{width:100%;padding:16px;border-radius:12px;border:none;background:var(--primary);color:#fff;font-family:'Zalando Sans';font-size:15px;cursor:pointer;}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--card);border:1px solid rgba(63,185,80,0.2);border-radius:14px;padding:18px 24px;box-shadow:var(--sh-glow),0 10px 40px rgba(0,0,0,0.4);z-index:200;transform:translateY(120px);opacity:0;transition:all 0.3s;}
+.toast.show{transform:translateY(0);opacity:1;}
+@media(max-width:480px){.login-container{padding:16px;}.card{padding:28px;}.logo-ico{width:52px;height:52px;font-size:20px;}.logo-name{font-size:20px;}}
+</style>
+</head>
+<body>
+<div class="bg-grid"></div>
+<div class="bg-glow"></div>
+
+<div class="login-container">
+  <div class="logo">
+    <div class="logo-ico">B</div>
+    <div class="logo-text">
+      <div class="logo-name">The Brain</div>
+      <div class="logo-sub">Secure Trading Platform</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="header">
+      <h1>Welcome Back</h1>
+      <p>Enter your credentials to access your account</p>
+    </div>
+
+    <div class="security-layers">
+      <div class="layer active" id="layer1"></div>
+      <div class="layer" id="layer2"></div>
+      <div class="layer" id="layer3"></div>
+    </div>
+
+    <form id="loginForm" onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label class="label">Email Address</label>
+        <div class="input-wrap">
+          <input type="email" class="input" id="email" placeholder="you@example.com" required>
+          <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 5l10 7 10-7"/></svg>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="label">Password</label>
+        <div class="input-wrap">
+          <input type="password" class="input" id="password" placeholder="••••••••" required oninput="checkStrength(this.value)">
+          <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <div class="password-strength">
+          <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+          <span class="strength-text" id="strengthText"></span>
+        </div>
+      </div>
+
+      <div class="options">
+        <label class="checkbox">
+          <input type="checkbox" id="remember">
+          <span class="checkmark"></span>
+          <span>Remember me</span>
+        </label>
+        <a href="#" class="forgot" onclick="showForgot()">Forgot password?</a>
+      </div>
+
+      <button type="submit" class="btn" id="loginBtn">Sign In</button>
+    </form>
+
+    <div class="divider">
+      <div class="divider-line"></div>
+      <span class="divider-text">Or continue with</span>
+      <div class="divider-line"></div>
+    </div>
+
+    <div class="social-login">
+      <button class="social-btn" onclick="socialLogin('google')">
+        <svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Google
+      </button>
+      <button class="social-btn" onclick="socialLogin('discord')">
+        <svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+        Discord
+      </button>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>Don't have an account? <a href="#" onclick="showSignup()">Create one</a></p>
+  </div>
+
+  <div class="security-badges">
+    <div class="badge">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      256-bit SSL
+    </div>
+    <div class="badge">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      2FA Protected
+    </div>
+    <div class="badge">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/></svg>
+      API Secured
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="twoFAModal">
+  <div class="modal">
+    <div class="modal-icon">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    </div>
+    <h3>Two-Factor Authentication</h3>
+    <p>Enter the 6-digit code from your authenticator app</p>
+    <div class="code-inputs">
+      <input type="text" class="code-input" maxlength="1" oninput="moveToNext(this, 0)">
+      <input type="text" class="code-input" maxlength="1" oninput="moveToNext(this, 1)">
+      <input type="text" class="code-input" maxlength="1" oninput="moveToNext(this, 2)">
+      <input type="text" class="code-input" maxlength="1" oninput="moveToNext(this, 3)">
+      <input type="text" class="code-input" maxlength="1" oninput="moveToNext(this, 4)">
+      <input type="text" class="code-input" maxlength="1" oninput="verify2FA(this)">
+    </div>
+    <button class="modal-btn" onclick="submit2FA()">Verify</button>
+  </div>
+</div>
+
+<div class="toast" id="toast">
+  <div style="font-family:'Zalando Sans Expanded';font-size:14px;color:var(--green);margin-bottom:6px;" id="toast-title">Success</div>
+  <div style="font-size:13px;color:var(--t2);" id="toast-msg">Operation completed</div>
+</div>
+
+<script>
+let currentLayer = 1;
+let twoFACode = '';
+
+function showToast(title, message, type = 'success') {
+  const toast = document.getElementById('toast');
+  document.getElementById('toast-title').textContent = title;
+  document.getElementById('toast-title').style.color = type === 'success' ? 'var(--green)' : type === 'error' ? 'var(--red)' : 'var(--amber)';
+  document.getElementById('toast-msg').textContent = message;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+function checkStrength(password) {
+  const fill = document.getElementById('strengthFill');
+  const text = document.getElementById('strengthText');
+  let strength = 0;
+  if (password.length > 6) strength++;
+  if (password.length > 10) strength++;
+  if (/[A-Z]/.test(password)) strength++;
+  if (/[0-9]/.test(password)) strength++;
+  if (/[^A-Za-z0-9]/.test(password)) strength++;
+  fill.className = 'strength-fill';
+  if (strength <= 2) { fill.classList.add('weak'); text.textContent = 'Weak'; }
+  else if (strength <= 4) { fill.classList.add('medium'); text.textContent = 'Medium'; }
+  else { fill.classList.add('strong'); text.textContent = 'Strong'; }
+}
+
+function handleLogin(e) {
+  e.preventDefault();
+  const btn = document.getElementById('loginBtn');
+  btn.disabled = true;
+  btn.textContent = 'Verifying...';
+  setTimeout(() => {
+    document.getElementById('layer1').classList.add('verified');
+    currentLayer = 2;
+    showToast('Layer 1', 'Credentials verified');
+    setTimeout(() => {
+      document.getElementById('twoFAModal').classList.add('show');
+      btn.disabled = false;
+      btn.textContent = 'Sign In';
+    }, 500);
+  }, 1500);
+}
+
+function moveToNext(input, index) {
+  if (input.value) {
+    const inputs = document.querySelectorAll('.code-input');
+    if (index < inputs.length - 1) inputs[index + 1].focus();
+  }
+}
+
+function verify2FA(input) {
+  if (input.value) {
+    const inputs = document.querySelectorAll('.code-input');
+    twoFACode = Array.from(inputs).map(i => i.value).join('');
+  }
+}
+
+function submit2FA() {
+  if (twoFACode.length === 6) {
+    document.getElementById('layer2').classList.add('verified');
+    document.getElementById('twoFAModal').classList.remove('show');
+    showToast('Layer 2', '2FA verified');
+    setTimeout(() => {
+      document.getElementById('layer3').classList.add('verified');
+      showToast('Success', 'All security layers passed! Redirecting...');
+      setTimeout(() => window.location.href = 'index.html', 1500);
+    }, 800);
+  } else {
+    showToast('Error', 'Please enter complete 6-digit code', 'error');
+  }
+}
+
+function socialLogin(provider) {
+  showToast('Social Login', `Connecting to ${provider}...`, 'info');
+  setTimeout(() => document.getElementById('twoFAModal').classList.add('show'), 1000);
+}
+
+function showForgot() { showToast('Reset', 'Password reset link sent to your email', 'info'); }
+function showSignup() { showToast('Signup', 'Registration page coming soon', 'info'); }
+
+document.getElementById('twoFAModal').addEventListener('click', (e) => {
+  if (e.target.id === 'twoFAModal') document.getElementById('twoFAModal').classList.remove('show');
+});
+</script>
+</body>
+</html>

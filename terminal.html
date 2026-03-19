@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spot Terminal | The Brain</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zalando+Sans+Expanded:ital,wght@0,200..900;1,200..900&family=Zalando+Sans:ital,wght@0,200..900;1,200..900&family=Zalando+Sans+Condensed:ital,wght@0,200..900;1,200..900&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --base: #161b2c;
+  --base-deep: #111520;
+  --card: #1e2438;
+  --card-top: #242c44;
+  --elevated: #2a3350;
+  --elevated-top: #313b5c;
+  --primary: #4a7bff;
+  --primary-dim: rgba(74,123,255,0.15);
+  --cyan: #4dc8ff;
+  --blue: #6688f0;
+  --indigo: #7578f5;
+  --purple: #918af5;
+  --green: #50e0aa;
+  --green-dim: rgba(80,224,170,0.10);
+  --red: #f57070;
+  --red-dim: rgba(245,112,112,0.10);
+  --amber: #f5c44e;
+  --amber-dim: rgba(245,196,78,0.10);
+  --t1: #eaecf5;
+  --t2: #7d86a0;
+  --t3: #4e5772;
+  --sh-d: rgba(6,8,20,0.45);
+  --sh-l: rgba(255,255,255,0.025);
+  --sh-card: 5px 5px 14px var(--sh-d), -2px -2px 8px var(--sh-l);
+  --sh-raised: 3px 3px 10px var(--sh-d), -1px -1px 6px var(--sh-l);
+  --sh-inset: inset 2px 2px 6px var(--sh-d), inset -1px -1px 4px var(--sh-l);
+  --sh-btn: 3px 3px 8px var(--sh-d), -1px -1px 5px var(--sh-l);
+  --sh-glow: var(--sh-card), 0 0 30px rgba(77,200,255,0.04);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--base);color:var(--t1);font-family:'Zalando Sans',sans-serif;min-height:100vh;font-weight:300;}
+.shell{display:flex;min-height:100vh;}
+.sb{width:230px;background:var(--base-deep);padding:22px 14px;display:flex;flex-direction:column;gap:2px;position:fixed;top:0;left:0;bottom:0;z-index:50;border-right:1px solid rgba(77,200,255,0.04);}
+.sb-brand{display:flex;align-items:center;gap:11px;padding:6px 10px 24px;margin-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.05);}
+.sb-ico{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,var(--cyan),var(--blue),var(--indigo));box-shadow:var(--sh-btn),0 0 24px rgba(77,200,255,0.1);display:flex;align-items:center;justify-content:center;font-family:'Zalando Sans Expanded';font-weight:800;font-size:17px;color:var(--base-deep);letter-spacing:-0.5px;}
+.sb-name{font-family:'Zalando Sans Expanded';font-weight:200;font-size:17px;letter-spacing:1px;color:var(--t1);}
+.sb-sub{font-family:'Zalando Sans Condensed';font-size:8.5px;color:var(--t3);text-transform:uppercase;letter-spacing:2.5px;font-weight:400;margin-top:2px;}
+
+.nv-label{font-family:'Zalando Sans Condensed';font-size:8.5px;text-transform:uppercase;letter-spacing:2.5px;color:var(--t3);padding:20px 12px 7px;font-weight:400;}
+.nv{display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:12px;font-size:13px;color:var(--t2);font-weight:300;cursor:pointer;transition:all 0.2s;text-decoration:none;}
+.nv:hover{color:var(--t1);background:rgba(255,255,255,0.03);}
+.nv.on{color:var(--cyan);font-weight:400;background:linear-gradient(135deg,rgba(77,200,255,0.06),rgba(102,136,240,0.03));box-shadow:var(--sh-card),inset 0 0 0 1px rgba(77,200,255,0.06);}
+.nv svg{width:17px;height:17px;opacity:0.35;flex-shrink:0;stroke-width:1.5;}
+.nv.on svg{opacity:0.9;stroke:var(--cyan);}
+
+.sb-ft{margin-top:auto;padding:14px 10px;border-top:1px solid rgba(255,255,255,0.05);display:flex;gap:6px;flex-wrap:wrap;}
+.cn{display:flex;align-items:center;gap:4px;font-size:9.5px;color:var(--t2);font-family:'JetBrains Mono';font-weight:400;padding:4px 10px;border-radius:8px;background:var(--card);box-shadow:var(--sh-raised);}
+.cn-d{width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 6px rgba(80,224,170,0.4);}
+
+.mn{flex:1;margin-left:230px;display:flex;flex-direction:column;}
+
+/* TOP BAR */
+.tb{height:54px;background:var(--base-deep);display:flex;align-items:center;padding:0 28px;gap:18px;position:sticky;top:0;z-index:40;border-bottom:1px solid rgba(77,200,255,0.04);}
+.tb-live{display:flex;align-items:center;gap:7px;font-family:'JetBrains Mono';font-size:10.5px;font-weight:500;color:var(--cyan);background:linear-gradient(135deg,rgba(77,200,255,0.08),rgba(102,136,240,0.04));padding:5px 14px;border-radius:20px;box-shadow:var(--sh-btn),0 0 16px rgba(77,200,255,0.06);border:1px solid rgba(77,200,255,0.06);}
+.tb-dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:pulse 2.5s ease-in-out infinite;box-shadow:0 0 8px rgba(77,200,255,0.5);}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 8px rgba(77,200,255,0.5);}50%{opacity:0.35;box-shadow:0 0 2px rgba(77,200,255,0.2);}}
+
+.tk{display:flex;gap:28px;font-family:'JetBrains Mono';font-size:12px;color:var(--t2);font-weight:400;}
+.tk-l{font-family:'Zalando Sans Condensed';font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-right:4px;}
+.tk-v{color:var(--t1);font-weight:500;}
+.tk-n{color:var(--red);}
+.tk-p{color:var(--primary);}
+
+.tb-r{margin-left:auto;display:flex;gap:12px;align-items:center;}
+.tb-b{font-family:'Zalando Sans';font-size:13px;font-weight:400;padding:10px 20px;border-radius:12px;border:none;background:linear-gradient(145deg,var(--elevated),var(--card));color:var(--t2);cursor:pointer;box-shadow:var(--sh-btn);transition:all 0.15s;}
+.pg{padding:28px;flex:1;}
+.pg-t{font-family:'Zalando Sans Expanded';font-size:30px;font-weight:200;margin-bottom:4px;}
+.pg-s{font-size:15px;color:var(--t2);margin-bottom:28px;}
+.bt{display:grid;grid-template-columns:repeat(12,1fr);gap:20px;}
+.cd{background:linear-gradient(165deg,var(--card-top) 0%,var(--card) 100%);border-radius:20px;padding:24px;position:relative;overflow:hidden;box-shadow:var(--sh-glow);border:1px solid rgba(77,200,255,0.06);transition:all 0.3s;}
+.cd:hover{box-shadow:7px 7px 20px var(--sh-d),-3px -3px 12px var(--sh-l),0 0 35px rgba(77,200,255,0.08);border-color:rgba(77,200,255,0.1);}
+.c-l{font-family:'Zalando Sans Condensed';font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--t3);}
+
+.chart-area{grid-column:span 8;min-height:500px;}
+.chart-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+.pair{font-family:'JetBrains Mono';font-size:26px;font-weight:600;}
+.price{font-family:'JetBrains Mono';font-size:32px;color:var(--green);}
+.price-change{font-size:14px;color:var(--green);margin-left:10px;}
+.chart-placeholder{height:400px;background:var(--elevated);border-radius:16px;display:flex;align-items:center;justify-content:center;}
+
+/* ORDER BOOK - FIXED SPACING */
+.order-book{grid-column:span 4;}
+.book-header{display:flex;gap:10px;margin-bottom:18px;}
+.book-tab{flex:1;padding:12px;border-radius:12px;border:none;background:var(--elevated);color:var(--t3);font-size:14px;cursor:pointer;transition:all 0.2s;}
+.book-tab.active{background:var(--primary);color:#fff;}
+.book-row{display:flex;justify-content:space-between;padding:12px 16px;font-family:'JetBrains Mono';font-size:14px;border-radius:8px;transition:background 0.15s;}
+.book-row:hover{background:rgba(88,166,255,0.05);}
+.book-row.ask{color:var(--red);}
+.book-row.bid{color:var(--green);}
+
+.order-form{grid-column:span 4;}
+.form-tabs{display:flex;gap:10px;margin-bottom:18px;}
+.form-tab{flex:1;padding:14px;border-radius:12px;border:none;font-size:15px;cursor:pointer;font-weight:500;}
+.form-tab.buy{background:var(--green-dim);color:var(--green);}
+.form-tab.sell{background:var(--red-dim);color:var(--red);}
+.input-group{margin-bottom:16px;}
+.input-label{display:block;font-size:12px;color:var(--t3);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;}
+.input-field{width:100%;padding:14px 16px;border-radius:12px;border:1px solid rgba(255,255,255,0.06);background:var(--elevated);color:var(--t1);font-family:'JetBrains Mono';font-size:15px;}
+.input-field:focus{outline:none;border-color:var(--primary);}
+.order-btn{width:100%;padding:16px;border-radius:12px;border:none;font-size:16px;font-weight:600;cursor:pointer;transition:all 0.2s;}
+.order-btn.buy{background:linear-gradient(135deg,var(--green),#2ea043);color:#fff;box-shadow:0 4px 20px rgba(63,185,80,0.4);}
+.order-btn.sell{background:linear-gradient(135deg,var(--red),#e05a5a);color:#fff;box-shadow:0 4px 20px rgba(248,81,73,0.4);}
+
+.recent-trades{grid-column:span 12;}
+table{width:100%;border-collapse:separate;border-spacing:0 4px;}
+thead th{text-align:left;font-family:'Zalando Sans Condensed';font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--t3);padding:10px 14px;}
+tbody td{padding:12px 14px;font-size:14px;font-family:'JetBrains Mono';background:var(--elevated);}
+tbody tr:hover td{background:rgba(88,166,255,0.05);}
+</style>
+</head>
+<body>
+<div class="shell">
+  <nav class="sb">
+    <div class="sb-brand">
+      <div class="sb-ico">B</div>
+      <div>
+        <div class="sb-name">The Brain</div>
+        <div class="sb-sub">Spot Only • No Leverage</div>
+      </div>
+    </div>
+    <div class="nv-label">Monitor</div>
+    <a class="nv" href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="4" rx="2"/><rect x="14" y="10" width="7" height="7" rx="2"/><rect x="3" y="13" width="7" height="4" rx="2"/></svg>Command Center</a>
+    <a class="nv" href="portfolio.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/></svg>Portfolio</a>
+    <a class="nv" href="signals.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>Signals</a>
+    <div class="nv-label">Trade</div>
+    <a class="nv on" href="terminal.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>Spot Terminal</a>
+    <a class="nv" href="bots.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6v6H9z"/></svg>Trading Bots</a>
+    <div class="sb-ft">
+      <div class="cn"><div class="cn-d"></div><span>Bybit</span></div>
+      <div class="cn"><div class="cn-d"></div><span>Binance</span></div>
+    </div>
+  </nav>
+
+  <div class="mn">
+    <header class="tb">
+      <div class="tb-live"><div class="tb-dot"></div>SPOT ONLY</div>
+      <div class="tk">
+        <div><span class="tk-l">Equity </span><span class="tk-v" id="tk-equity">$2,844.85</span></div>
+        <div><span class="tk-l">Cash </span><span class="tk-p">30%</span></div>
+        <div><span class="tk-l">Positions </span><span class="tk-v">5</span></div>
+        <div><span class="tk-l">Mode </span><span class="tk-v" style="color:var(--green);">SPOT</span></div>
+      </div>
+      <div class="tb-r">
+        <button class="tb-b" onclick="connectBybit()">Connect Bybit</button>
+        <button class="tb-b" onclick="showToast('Protection', 'Spot protection active')">Spot Protection</button>
+        <a href="login.html" class="tb-b" style="text-decoration:none;">Login</a>
+      </div>
+    </header>
+      <div style="margin-left:auto;"><a href="login.html" class="tb-b" style="text-decoration:none;">Logout</a></div>
+    </header>
+
+    <div class="pg">
+      <h1 class="pg-t">Spot Terminal</h1>
+      <p class="pg-s">Execute spot trades with precision</p>
+
+      <div class="bt">
+        <div class="cd chart-area">
+          <div class="chart-header">
+            <div><span class="pair">BTC/USDT</span></div>
+            <div><span class="price">$84,231.45</span><span class="price-change">+2.34%</span></div>
+          </div>
+          <div class="chart-placeholder">
+            <div style="text-align:center;color:var(--t3);">
+              <svg width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" style="opacity:0.4;margin-bottom:20px;">
+                <path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/>
+              </svg>
+              <div style="font-size:18px;margin-bottom:8px;">Live Chart</div>
+              <div style="font-size:14px;opacity:0.6;">Connect API for real-time data</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="cd order-book">
+          <div class="c-l">Order Book</div>
+          <div class="book-header">
+            <button class="book-tab active">Order Book</button>
+            <button class="book-tab">Trades</button>
+          </div>
+          <div>
+            <div class="book-row ask"><span>84,245.00</span><span>0.523</span></div>
+            <div class="book-row ask"><span>84,238.50</span><span>1.205</span></div>
+            <div class="book-row ask"><span>84,235.00</span><span>0.891</span></div>
+            <div class="book-row ask"><span>84,232.00</span><span>2.134</span></div>
+            <div style="height:2px;background:rgba(255,255,255,0.08);margin:12px 0;"></div>
+            <div class="book-row bid"><span>84,228.00</span><span>1.567</span></div>
+            <div class="book-row bid"><span>84,225.50</span><span>0.923</span></div>
+            <div class="book-row bid"><span>84,220.00</span><span>3.445</span></div>
+            <div class="book-row bid"><span>84,215.00</span><span>0.678</span></div>
+          </div>
+        </div>
+
+        <div class="cd order-form">
+          <div class="form-tabs">
+            <button class="form-tab buy">Buy BTC</button>
+            <button class="form-tab sell">Sell BTC</button>
+          </div>
+          <div class="input-group">
+            <label class="input-label">Price (USDT)</label>
+            <input type="number" class="input-field" value="84231.45">
+          </div>
+          <div class="input-group">
+            <label class="input-label">Amount (BTC)</label>
+            <input type="number" class="input-field" placeholder="0.00">
+          </div>
+          <div class="input-group">
+            <label class="input-label">Total (USDT)</label>
+            <input type="number" class="input-field" placeholder="0.00">
+          </div>
+          <button class="order-btn buy">Buy BTC</button>
+        </div>
+
+        <div class="cd recent-trades">
+          <div class="c-l">Recent Trades</div>
+          <table>
+            <thead>
+              <tr><th>Time</th><th>Pair</th><th>Side</th><th>Price</th><th>Amount</th><th>Total</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>12:45:23</td><td>BTC/USDT</td><td style="color:var(--green);">BUY</td><td>$84,231.45</td><td>0.052</td><td>$4,380.04</td></tr>
+              <tr><td>12:44:18</td><td>ETH/USDT</td><td style="color:var(--red);">SELL</td><td>$3,312.80</td><td>1.25</td><td>$4,141.00</td></tr>
+              <tr><td>12:42:05</td><td>SOL/USDT</td><td style="color:var(--green);">BUY</td><td>$152.45</td><td>15.0</td><td>$2,286.75</td></tr>
+              <tr><td>12:38:42</td><td>LINK/USDT</td><td style="color:var(--green);">BUY</td><td>$19.42</td><td>50.0</td><td>$971.00</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <div style="font-family:'Zalando Sans Expanded';font-size:14px;color:var(--green);margin-bottom:6px;" id="toast-title">Success</div>
+  <div style="font-size:13px;color:var(--t2);" id="toast-msg">Operation completed</div>
+</div>
+
+<style>
+/* Toast */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--card);border:1px solid rgba(80,224,170,0.2);border-radius:14px;padding:18px 24px;box-shadow:var(--sh-glow),0 10px 40px rgba(0,0,0,0.4);z-index:100;transform:translateY(120px);opacity:0;transition:all 0.3s;}
+.toast.show{transform:translateY(0);opacity:1;}
+</style>
+
+<script>
+function showToast(title, message, type = 'success') {
+  const toast = document.getElementById('toast');
+  document.getElementById('toast-title').textContent = title;
+  document.getElementById('toast-title').style.color = type === 'success' ? 'var(--green)' : type === 'error' ? 'var(--red)' : 'var(--amber)';
+  document.getElementById('toast-msg').textContent = message;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+function connectBybit() {
+  const key = prompt('Enter Bybit API Key:');
+  const secret = prompt('Enter Bybit API Secret:');
+  if (key && secret) {
+    localStorage.setItem('bybit_api_key', key);
+    localStorage.setItem('bybit_api_secret', secret);
+    showToast('Bybit Connected', 'API credentials saved successfully');
+  }
+}
+</script>
+</body>
+</html>

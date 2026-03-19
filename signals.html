@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Signals | The Brain - Whale Alerts & Smart Money</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zalando+Sans+Expanded:ital,wght@0,200..900;1,200..900&family=Zalando+Sans:ital,wght@0,200..900;1,200..900&family=Zalando+Sans+Condensed:ital,wght@0,200..900;1,200..900&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --base: #161b2c;
+  --base-deep: #111520;
+  --card: #1e2438;
+  --card-top: #242c44;
+  --elevated: #2a3350;
+  --elevated-top: #313b5c;
+  --primary: #4a7bff;
+  --primary-dim: rgba(74,123,255,0.15);
+  --cyan: #4dc8ff;
+  --blue: #6688f0;
+  --indigo: #7578f5;
+  --purple: #918af5;
+  --green: #50e0aa;
+  --green-dim: rgba(80,224,170,0.10);
+  --red: #f57070;
+  --red-dim: rgba(245,112,112,0.10);
+  --amber: #f5c44e;
+  --amber-dim: rgba(245,196,78,0.10);
+  --t1: #eaecf5;
+  --t2: #7d86a0;
+  --t3: #4e5772;
+  --sh-d: rgba(6,8,20,0.45);
+  --sh-l: rgba(255,255,255,0.025);
+  --sh-card: 5px 5px 14px var(--sh-d), -2px -2px 8px var(--sh-l);
+  --sh-raised: 3px 3px 10px var(--sh-d), -1px -1px 6px var(--sh-l);
+  --sh-inset: inset 2px 2px 6px var(--sh-d), inset -1px -1px 4px var(--sh-l);
+  --sh-btn: 3px 3px 8px var(--sh-d), -1px -1px 5px var(--sh-l);
+  --sh-glow: var(--sh-card), 0 0 30px rgba(77,200,255,0.04);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--base);color:var(--t1);font-family:'Zalando Sans',sans-serif;min-height:100vh;font-weight:300;}
+.shell{display:flex;min-height:100vh;}
+.sb{width:230px;background:var(--base-deep);padding:22px 14px;display:flex;flex-direction:column;gap:2px;position:fixed;top:0;left:0;bottom:0;z-index:50;border-right:1px solid rgba(77,200,255,0.04);}
+.sb-brand{display:flex;align-items:center;gap:11px;padding:6px 10px 24px;margin-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.05);}
+.sb-ico{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,var(--cyan),var(--blue),var(--indigo));box-shadow:var(--sh-btn),0 0 24px rgba(77,200,255,0.1);display:flex;align-items:center;justify-content:center;font-family:'Zalando Sans Expanded';font-weight:800;font-size:17px;color:var(--base-deep);letter-spacing:-0.5px;}
+.sb-name{font-family:'Zalando Sans Expanded';font-weight:200;font-size:17px;letter-spacing:1px;color:var(--t1);}
+.sb-sub{font-family:'Zalando Sans Condensed';font-size:8.5px;color:var(--t3);text-transform:uppercase;letter-spacing:2.5px;font-weight:400;margin-top:2px;}
+
+.nv-label{font-family:'Zalando Sans Condensed';font-size:8.5px;text-transform:uppercase;letter-spacing:2.5px;color:var(--t3);padding:20px 12px 7px;font-weight:400;}
+.nv{display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:12px;font-size:13px;color:var(--t2);font-weight:300;cursor:pointer;transition:all 0.2s;text-decoration:none;}
+.nv:hover{color:var(--t1);background:rgba(255,255,255,0.03);}
+.nv.on{color:var(--cyan);font-weight:400;background:linear-gradient(135deg,rgba(77,200,255,0.06),rgba(102,136,240,0.03));box-shadow:var(--sh-card),inset 0 0 0 1px rgba(77,200,255,0.06);}
+.nv svg{width:17px;height:17px;opacity:0.35;flex-shrink:0;stroke-width:1.5;}
+.nv.on svg{opacity:0.9;stroke:var(--cyan);}
+
+.sb-ft{margin-top:auto;padding:14px 10px;border-top:1px solid rgba(255,255,255,0.05);display:flex;gap:6px;flex-wrap:wrap;}
+.cn{display:flex;align-items:center;gap:4px;font-size:9.5px;color:var(--t2);font-family:'JetBrains Mono';font-weight:400;padding:4px 10px;border-radius:8px;background:var(--card);box-shadow:var(--sh-raised);}
+.cn-d{width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 6px rgba(80,224,170,0.4);}
+
+.mn{flex:1;margin-left:230px;display:flex;flex-direction:column;}
+
+/* TOP BAR */
+.tb{height:54px;background:var(--base-deep);display:flex;align-items:center;padding:0 28px;gap:18px;position:sticky;top:0;z-index:40;border-bottom:1px solid rgba(77,200,255,0.04);}
+.tb-live{display:flex;align-items:center;gap:7px;font-family:'JetBrains Mono';font-size:10.5px;font-weight:500;color:var(--cyan);background:linear-gradient(135deg,rgba(77,200,255,0.08),rgba(102,136,240,0.04));padding:5px 14px;border-radius:20px;box-shadow:var(--sh-btn),0 0 16px rgba(77,200,255,0.06);border:1px solid rgba(77,200,255,0.06);}
+.tb-dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:pulse 2.5s ease-in-out infinite;box-shadow:0 0 8px rgba(77,200,255,0.5);}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 8px rgba(77,200,255,0.5);}50%{opacity:0.35;box-shadow:0 0 2px rgba(77,200,255,0.2);}}
+
+.tk{display:flex;gap:28px;font-family:'JetBrains Mono';font-size:12px;color:var(--t2);font-weight:400;}
+.tk-l{font-family:'Zalando Sans Condensed';font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-right:4px;}
+.tk-v{color:var(--t1);font-weight:500;}
+.tk-n{color:var(--red);}
+.tk-p{color:var(--primary);}
+
+.tb-r{margin-left:auto;display:flex;gap:12px;align-items:center;}
+.tb-b{font-family:'Zalando Sans';font-size:13px;font-weight:400;padding:10px 20px;border-radius:12px;border:none;background:linear-gradient(145deg,var(--elevated),var(--card));color:var(--t2);cursor:pointer;box-shadow:var(--sh-btn);transition:all 0.15s;}
+.pg{padding:28px;flex:1;}
+.pg-t{font-family:'Zalando Sans Expanded';font-size:30px;font-weight:200;margin-bottom:4px;}
+.pg-s{font-size:15px;color:var(--t2);margin-bottom:28px;}
+.bt{display:grid;grid-template-columns:repeat(12,1fr);gap:20px;}
+.cd{background:linear-gradient(165deg,var(--card-top),var(--card));border-radius:20px;padding:24px;box-shadow:var(--sh-glow);border:1px solid rgba(88,166,255,0.06);}
+.c-l{font-family:'Zalando Sans Condensed';font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--t3);margin-bottom:12px;}
+
+/* Signal Tabs */
+.signal-tabs{display:flex;gap:12px;margin-bottom:24px;border-bottom:1px solid rgba(255,255,255,0.06);padding-bottom:16px;}
+.sig-tab{padding:12px 24px;border-radius:12px;border:none;background:var(--elevated);color:var(--t2);font-size:14px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:10px;}
+.sig-tab:hover{background:var(--card);color:var(--t1);}
+.sig-tab.active{background:linear-gradient(135deg,var(--primary),#79c0ff);color:#fff;box-shadow:0 4px 20px rgba(88,166,255,0.35);}
+.sig-tab .badge{font-size:10px;padding:3px 10px;border-radius:20px;background:rgba(0,0,0,0.2);}
+
+/* Signal Cards */
+.signal-feed{grid-column:span 8;}
+.sig-card{display:flex;align-items:center;gap:16px;padding:18px;background:var(--elevated);border-radius:16px;margin-bottom:12px;border:1px solid rgba(255,255,255,0.04);transition:all 0.2s;}
+.sig-card:hover{border-color:rgba(88,166,255,0.15);transform:translateX(4px);}
+.sig-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sig-icon.whale{background:var(--primary-dim);}
+.sig-icon.smart{background:var(--green-dim);}
+.sig-icon.alpha{background:var(--amber-dim);}
+.sig-icon.pump{background:var(--red-dim);}
+.sig-content{flex:1;}
+.sig-header{display:flex;align-items:center;gap:12px;margin-bottom:6px;}
+.sig-title{font-size:16px;font-weight:500;}
+.sig-time{font-size:12px;color:var(--t3);}
+.sig-desc{font-size:14px;color:var(--t2);margin-bottom:8px;}
+.sig-meta{display:flex;gap:16px;font-size:12px;color:var(--t3);}
+.sig-meta span{display:flex;align-items:center;gap:6px;}
+.sig-action{padding:10px 20px;border-radius:10px;border:none;font-family:'JetBrains Mono';font-size:12px;font-weight:600;cursor:pointer;}
+.sig-action.buy{background:var(--green);color:#fff;}
+.sig-action.sell{background:var(--red);color:#fff;}
+.sig-action.watch{background:var(--elevated);color:var(--t2);}
+
+/* Signal Stats */
+.sig-stats{grid-column:span 4;}
+.stat-row{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+.stat-row:last-child{border-bottom:none;}
+.stat-name{font-size:14px;color:var(--t2);}
+.stat-value{font-family:'JetBrains Mono';font-size:16px;}
+
+/* Whale Alert Banner */
+.whale-banner{grid-column:span 12;background:linear-gradient(135deg,rgba(88,166,255,0.1),rgba(121,192,255,0.05));border:1px solid rgba(88,166,255,0.15);padding:20px 24px;border-radius:16px;display:flex;align-items:center;gap:20px;}
+.whale-icon{width:56px;height:56px;border-radius:16px;background:var(--primary-dim);display:flex;align-items:center;justify-content:center;}
+.whale-content{flex:1;}
+.whale-title{font-size:18px;margin-bottom:4px;}
+.whale-desc{font-size:14px;color:var(--t2);}
+.whale-amount{font-family:'JetBrains Mono';font-size:24px;color:var(--primary);}
+
+/* Prediction Card */
+.prediction-card{grid-column:span 6;}
+.pred-item{display:flex;align-items:center;justify-content:space-between;padding:16px;background:var(--elevated);border-radius:12px;margin-bottom:10px;}
+.pred-asset{display:flex;align-items:center;gap:12px;}
+.pred-icon{width:40px;height:40px;border-radius:10px;background:var(--card);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono';font-size:12px;font-weight:600;}
+.pred-name{font-size:15px;}
+.pred-confidence{font-size:12px;color:var(--t3);}
+.pred-direction{padding:8px 16px;border-radius:20px;font-family:'JetBrains Mono';font-size:12px;font-weight:600;}
+.pred-direction.bull{background:var(--green-dim);color:var(--green);}
+.pred-direction.bear{background:var(--red-dim);color:var(--red);}
+.pred-target{font-family:'JetBrains Mono';font-size:14px;color:var(--primary);}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--card);border:1px solid rgba(63,185,80,0.2);border-radius:14px;padding:18px 24px;box-shadow:var(--sh-glow),0 10px 40px rgba(0,0,0,0.4);z-index:100;transform:translateY(120px);opacity:0;transition:all 0.3s;}
+.toast.show{transform:translateY(0);opacity:1;}
+</style>
+</head>
+<body>
+<div class="shell">
+  <nav class="sb">
+    <div class="sb-brand">
+      <div class="sb-ico">B</div>
+      <div>
+        <div class="sb-name">The Brain</div>
+        <div class="sb-sub">Spot Only • No Leverage</div>
+      </div>
+    </div>
+    <div class="nv-label">Monitor</div>
+    <a class="nv" href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="4" rx="2"/><rect x="14" y="10" width="7" height="7" rx="2"/><rect x="3" y="13" width="7" height="4" rx="2"/></svg>Command Center</a>
+    <a class="nv" href="portfolio.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/></svg>Portfolio</a>
+    <a class="nv on" href="signals.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>Signals</a>
+    <div class="nv-label">Trade</div>
+    <a class="nv" href="terminal.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>Spot Terminal</a>
+    <a class="nv" href="bots.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6v6H9z"/></svg>Trading Bots</a>
+    <div class="sb-ft">
+      <div class="cn"><div class="cn-d"></div><span>Bybit</span></div>
+      <div class="cn"><div class="cn-d"></div><span>Binance</span></div>
+    </div>
+  </nav>
+
+  <div class="mn">
+    <header class="tb">
+      <div class="tb-live"><div class="tb-dot"></div>SPOT ONLY</div>
+      <div class="tk">
+        <div><span class="tk-l">Equity </span><span class="tk-v" id="tk-equity">$2,844.85</span></div>
+        <div><span class="tk-l">Cash </span><span class="tk-p">30%</span></div>
+        <div><span class="tk-l">Positions </span><span class="tk-v">5</span></div>
+        <div><span class="tk-l">Mode </span><span class="tk-v" style="color:var(--green);">SPOT</span></div>
+      </div>
+      <div class="tb-r">
+        <button class="tb-b" onclick="connectBybit()">Connect Bybit</button>
+        <button class="tb-b" onclick="showToast('Protection', 'Spot protection active')">Spot Protection</button>
+        <a href="login.html" class="tb-b" style="text-decoration:none;">Login</a>
+      </div>
+    </header>
+
+    <div class="pg">
+      <h1 class="pg-t">Alpha Signals</h1>
+      <p class="pg-s">Whale alerts, smart money flows, and insider predictions</p>
+
+      <div class="signal-tabs">
+        <button class="sig-tab active" onclick="switchTab('all')">All Signals <span class="badge">24</span></button>
+        <button class="sig-tab" onclick="switchTab('whale')">🐋 Whale Alerts</button>
+        <button class="sig-tab" onclick="switchTab('smart')">💡 Smart Money</button>
+        <button class="sig-tab" onclick="switchTab('alpha')">🔮 Predictions</button>
+      </div>
+
+      <div class="bt">
+        <!-- Whale Banner -->
+        <div class="whale-banner">
+          <div class="whale-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+          </div>
+          <div class="whale-content">
+            <div class="whale-title">Massive BTC Transfer Detected</div>
+            <div class="whale-desc">Unknown wallet moved 5,000 BTC to exchange</div>
+          </div>
+          <div class="whale-amount">$421M</div>
+        </div>
+
+        <!-- Signal Feed -->
+        <div class="cd signal-feed">
+          <div class="c-l">Live Signal Feed</div>
+          
+          <div class="sig-card">
+            <div class="sig-icon whale">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+            </div>
+            <div class="sig-content">
+              <div class="sig-header">
+                <span class="sig-title">Whale Accumulation</span>
+                <span class="sig-time">2 min ago</span>
+              </div>
+              <div class="sig-desc">Large wallet (0x7a2f...) bought 2,500 ETH worth $8.3M</div>
+              <div class="sig-meta">
+                <span>💰 $8.3M Volume</span>
+                <span>📊 Spot Buy</span>
+                <span>🎯 Confidence: 94%</span>
+              </div>
+            </div>
+            <button class="sig-action buy" onclick="trade('ETH', 'buy')">BUY ETH</button>
+          </div>
+
+          <div class="sig-card">
+            <div class="sig-icon smart">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+            </div>
+            <div class="sig-content">
+              <div class="sig-header">
+                <span class="sig-title">Smart Money Inflow</span>
+                <span class="sig-time">5 min ago</span>
+              </div>
+              <div class="sig-desc">Institutional wallets increased SOL positions by 15%</div>
+              <div class="sig-meta">
+                <span>💰 $12.5M Inflow</span>
+                <span>📈 24H Change: +8.2%</span>
+                <span>🎯 Confidence: 89%</span>
+              </div>
+            </div>
+            <button class="sig-action buy" onclick="trade('SOL', 'buy')">BUY SOL</button>
+          </div>
+
+          <div class="sig-card">
+            <div class="sig-icon alpha">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            </div>
+            <div class="sig-content">
+              <div class="sig-header">
+                <span class="sig-title">Alpha Alert: LINK Breakout</span>
+                <span class="sig-time">12 min ago</span>
+              </div>
+              <div class="sig-desc">Technical analysis shows LINK breaking resistance at $19.50</div>
+              <div class="sig-meta">
+                <span>📊 RSI: 62</span>
+                <span>📈 Volume: +45%</span>
+                <span>🎯 Target: $22.00</span>
+              </div>
+            </div>
+            <button class="sig-action buy" onclick="trade('LINK', 'buy')">BUY LINK</button>
+          </div>
+
+          <div class="sig-card">
+            <div class="sig-icon pump">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><path d="M13 7h-8v10h8v-10z"/><path d="M17 7v10"/><path d="M21 7v10"/></svg>
+            </div>
+            <div class="sig-content">
+              <div class="sig-header">
+                <span class="sig-title">Potential Dump Warning</span>
+                <span class="sig-time">18 min ago</span>
+              </div>
+              <div class="sig-desc">Large holder moved 10M AVAX to multiple exchanges</div>
+              <div class="sig-meta">
+                <span>⚠️ Sell Pressure</span>
+                <span>💰 $320M at Risk</span>
+                <span>🎯 Confidence: 76%</span>
+              </div>
+            </div>
+            <button class="sig-action sell" onclick="trade('AVAX', 'sell')">SELL AVAX</button>
+          </div>
+        </div>
+
+        <!-- Signal Stats -->
+        <div class="cd sig-stats">
+          <div class="c-l">Signal Performance</div>
+          <div class="stat-row">
+            <span class="stat-name">Today's Signals</span>
+            <span class="stat-value" style="color:var(--primary);">24</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-name">Success Rate</span>
+            <span class="stat-value" style="color:var(--green);">78.5%</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-name">Avg Profit</span>
+            <span class="stat-value" style="color:var(--green);">+4.2%</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-name">Whale Alerts</span>
+            <span class="stat-value" style="color:var(--primary);">8</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-name">Smart Money</span>
+            <span class="stat-value" style="color:var(--purple);">12</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-name">Predictions</span>
+            <span class="stat-value" style="color:var(--amber);">4</span>
+          </div>
+        </div>
+
+        <!-- Price Predictions -->
+        <div class="cd prediction-card">
+          <div class="c-l">1-Hour Predictions</div>
+          
+          <div class="pred-item">
+            <div class="pred-asset">
+              <div class="pred-icon" style="color:var(--primary);">BTC</div>
+              <div>
+                <div class="pred-name">Bitcoin</div>
+                <div class="pred-confidence">Confidence: 87%</div>
+              </div>
+            </div>
+            <span class="pred-direction bull">BULLISH</span>
+            <span class="pred-target">$85,200</span>
+          </div>
+
+          <div class="pred-item">
+            <div class="pred-asset">
+              <div class="pred-icon" style="color:var(--purple);">ETH</div>
+              <div>
+                <div class="pred-name">Ethereum</div>
+                <div class="pred-confidence">Confidence: 82%</div>
+              </div>
+            </div>
+            <span class="pred-direction bull">BULLISH</span>
+            <span class="pred-target">$3,450</span>
+          </div>
+
+          <div class="pred-item">
+            <div class="pred-asset">
+              <div class="pred-icon" style="color:var(--cyan);">SOL</div>
+              <div>
+                <div class="pred-name">Solana</div>
+                <div class="pred-confidence">Confidence: 71%</div>
+              </div>
+            </div>
+            <span class="pred-direction bull">BULLISH</span>
+            <span class="pred-target">$158.00</span>
+          </div>
+
+          <div class="pred-item">
+            <div class="pred-asset">
+              <div class="pred-icon" style="color:var(--red);">AVAX</div>
+              <div>
+                <div class="pred-name">Avalanche</div>
+                <div class="pred-confidence">Confidence: 68%</div>
+              </div>
+            </div>
+            <span class="pred-direction bear">BEARISH</span>
+            <span class="pred-target">$30.50</span>
+          </div>
+        </div>
+
+        <!-- Alpha Secrets -->
+        <div class="cd prediction-card">
+          <div class="c-l">Alpha Secrets</div>
+          
+          <div class="pred-item">
+            <div class="pred-asset">
+              <div class="pred-icon" style="color:var(--amber);background:var(--amber-dim);">🔥</div>
+              <div>
+                <div class="pred-name">New Listing Incoming</div>
+                <div class="pred-confidence">Exchange: Coinbase</div>
+              </div>
+            </div>
+            <span class="pred-target" style="color:var(--amber);">24H</span>
+          </div>
+
+          <div class="pred-item">
+            <div class="pred-asset">
+              <div class="pred-icon" style="color:var(--green);background:var(--green-dim);">📈</div>
+              <div>
+                <div class="pred-name">Funding Rate Flip</div>
+                <div class="pred-confidence">BTC: -0.01% → +0.05%</div>
+              </div>
+            </div>
+            <span class="pred-target" style="color:var(--green);">BULL</span>
+          </div>
+
+          <div class="pred-item">
+            <div class="pred-asset">
+              <div class="pred-icon" style="color:var(--purple);background:rgba(210,168,255,0.15);">🔄</div>
+              <div>
+                <div class="pred-name">Options Expiry</div>
+                <div class="pred-confidence">$2.4B at $84K strike</div>
+              </div>
+            </div>
+            <span class="pred-target" style="color:var(--purple);">Today</span>
+          </div>
+
+          <div class="pred-item">
+            <div class="pred-asset">
+              <div class="pred-icon" style="color:var(--cyan);background:rgba(57,208,216,0.15);">🏛️</div>
+              <div>
+                <div class="pred-name">ETF Flow</div>
+                <div class="pred-confidence">+$450M yesterday</div>
+              </div>
+            </div>
+            <span class="pred-target" style="color:var(--cyan);">+5.2%</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">
+  <div style="font-family:'Zalando Sans Expanded';font-size:14px;color:var(--green);margin-bottom:6px;" id="toast-title">Success</div>
+  <div style="font-size:13px;color:var(--t2);" id="toast-msg">Operation completed</div>
+</div>
+
+<script>
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('collapsed');
+}
+
+function showToast(title, message, type = 'success') {
+  const toast = document.getElementById('toast');
+  document.getElementById('toast-title').textContent = title;
+  document.getElementById('toast-title').style.color = type === 'success' ? 'var(--green)' : type === 'error' ? 'var(--red)' : 'var(--amber)';
+  document.getElementById('toast-msg').textContent = message;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.sig-tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  showToast('Filter', `Showing ${tab} signals`, 'info');
+}
+
+function trade(symbol, action) {
+  showToast('Trade', `${action.toUpperCase()} order placed for ${symb
