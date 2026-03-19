@@ -170,14 +170,8 @@ tbody tr:hover td{background:rgba(88,166,255,0.05);}
             <div><span class="pair">BTC/USDT</span></div>
             <div><span class="price">$84,231.45</span><span class="price-change">+2.34%</span></div>
           </div>
-          <div class="chart-placeholder">
-            <div style="text-align:center;color:var(--t3);">
-              <svg width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" style="opacity:0.4;margin-bottom:20px;">
-                <path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/>
-              </svg>
-              <div style="font-size:18px;margin-bottom:8px;">Live Chart</div>
-              <div style="font-size:14px;opacity:0.6;">Connect API for real-time data</div>
-            </div>
+          <div class="chart-container" style="height:400px;position:relative;">
+            <canvas id="priceChart"></canvas>
           </div>
         </div>
 
@@ -251,6 +245,7 @@ tbody tr:hover td{background:rgba(88,166,255,0.05);}
 .toast.show{transform:translateY(0);opacity:1;}
 </style>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 function showToast(title, message, type = 'success') {
   const toast = document.getElementById('toast');
@@ -270,6 +265,104 @@ function connectBybit() {
     showToast('Bybit Connected', 'API credentials saved successfully');
   }
 }
+
+// Generate sample price data
+function generatePriceData() {
+  const data = [];
+  let price = 84000;
+  const now = new Date();
+  for (let i = 30; i >= 0; i--) {
+    const time = new Date(now.getTime() - i * 60 * 60 * 1000);
+    const change = (Math.random() - 0.5) * 500;
+    price += change;
+    data.push({
+      x: time.toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit'}),
+      y: price
+    });
+  }
+  return data;
+}
+
+// Initialize Chart
+const ctx = document.getElementById('priceChart').getContext('2d');
+const priceData = generatePriceData();
+
+const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+gradient.addColorStop(0, 'rgba(77, 200, 255, 0.3)');
+gradient.addColorStop(1, 'rgba(77, 200, 255, 0)');
+
+new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: priceData.map(d => d.x),
+    datasets: [{
+      label: 'BTC/USDT',
+      data: priceData.map(d => d.y),
+      borderColor: '#4dc8ff',
+      backgroundColor: gradient,
+      borderWidth: 2,
+      fill: true,
+      tension: 0.4,
+      pointRadius: 0,
+      pointHoverRadius: 6,
+      pointHoverBackgroundColor: '#4dc8ff',
+      pointHoverBorderColor: '#fff',
+      pointHoverBorderWidth: 2
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: {
+      intersect: false,
+      mode: 'index'
+    },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: 'rgba(30, 36, 56, 0.95)',
+        titleColor: '#7d86a0',
+        bodyColor: '#eaecf5',
+        bodyFont: { family: 'JetBrains Mono', size: 14 },
+        borderColor: 'rgba(77, 200, 255, 0.2)',
+        borderWidth: 1,
+        padding: 12,
+        displayColors: false,
+        callbacks: {
+          label: function(context) {
+            return '$' + context.parsed.y.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+          }
+        }
+      }
+    },
+    scales: {
+      x: {
+        grid: {
+          color: 'rgba(255, 255, 255, 0.03)',
+          drawBorder: false
+        },
+        ticks: {
+          color: '#7d86a0',
+          font: { family: 'JetBrains Mono', size: 11 },
+          maxTicksLimit: 6
+        }
+      },
+      y: {
+        grid: {
+          color: 'rgba(255, 255, 255, 0.03)',
+          drawBorder: false
+        },
+        ticks: {
+          color: '#7d86a0',
+          font: { family: 'JetBrains Mono', size: 11 },
+          callback: function(value) {
+            return '$' + value.toLocaleString();
+          }
+        }
+      }
+    }
+  }
+});
 </script>
 </body>
 </html>
