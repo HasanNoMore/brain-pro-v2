@@ -185,10 +185,22 @@ body{background:var(--base);color:var(--t1);font-family:'Zalando Sans',sans-seri
       <p class="pg-s">Whale alerts, smart money flows, and insider predictions</p>
 
       <div class="signal-tabs">
-        <button class="sig-tab active" onclick="switchTab('all')">All Signals <span class="badge">24</span></button>
-        <button class="sig-tab" onclick="switchTab('whale')">🐋 Whale Alerts</button>
-        <button class="sig-tab" onclick="switchTab('smart')">💡 Smart Money</button>
-        <button class="sig-tab" onclick="switchTab('alpha')">🔮 Predictions</button>
+        <button class="sig-tab active" onclick="switchTab('all', this)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="4" rx="2"/><rect x="14" y="10" width="7" height="7" rx="2"/><rect x="3" y="13" width="7" height="4" rx="2"/></svg>
+          All Signals <span class="badge">24</span>
+        </button>
+        <button class="sig-tab" onclick="switchTab('whale', this)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+          Whale Alerts
+        </button>
+        <button class="sig-tab" onclick="switchTab('smart', this)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+          Smart Money
+        </button>
+        <button class="sig-tab" onclick="switchTab('alpha', this)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          Predictions
+        </button>
       </div>
 
       <div class="bt">
@@ -208,7 +220,7 @@ body{background:var(--base);color:var(--t1);font-family:'Zalando Sans',sans-seri
         <div class="cd signal-feed">
           <div class="c-l">Live Signal Feed</div>
           
-          <div class="sig-card">
+          <div class="sig-card" data-type="whale">
             <div class="sig-icon whale">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
             </div>
@@ -227,7 +239,7 @@ body{background:var(--base);color:var(--t1);font-family:'Zalando Sans',sans-seri
             <button class="sig-action buy" onclick="trade('ETH', 'buy')">BUY ETH</button>
           </div>
 
-          <div class="sig-card">
+          <div class="sig-card" data-type="smart">
             <div class="sig-icon smart">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
             </div>
@@ -246,7 +258,7 @@ body{background:var(--base);color:var(--t1);font-family:'Zalando Sans',sans-seri
             <button class="sig-action buy" onclick="trade('SOL', 'buy')">BUY SOL</button>
           </div>
 
-          <div class="sig-card">
+          <div class="sig-card" data-type="alpha">
             <div class="sig-icon alpha">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
             </div>
@@ -265,7 +277,7 @@ body{background:var(--base);color:var(--t1);font-family:'Zalando Sans',sans-seri
             <button class="sig-action buy" onclick="trade('LINK', 'buy')">BUY LINK</button>
           </div>
 
-          <div class="sig-card">
+          <div class="sig-card" data-type="whale">
             <div class="sig-icon pump">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><path d="M13 7h-8v10h8v-10z"/><path d="M17 7v10"/><path d="M21 7v10"/></svg>
             </div>
@@ -440,10 +452,21 @@ function showToast(title, message, type = 'success') {
   setTimeout(() => toast.classList.remove('show'), 3000);
 }
 
-function switchTab(tab) {
+function switchTab(tab, btn) {
+  // Update active tab
   document.querySelectorAll('.sig-tab').forEach(t => t.classList.remove('active'));
-  event.target.classList.add('active');
-  showToast('Filter', `Showing ${tab} signals`, 'info');
+  btn.classList.add('active');
+  
+  // Filter signal cards
+  const cards = document.querySelectorAll('.sig-card');
+  cards.forEach(card => {
+    if (tab === 'all') {
+      card.style.display = 'flex';
+    } else {
+      const cardType = card.getAttribute('data-type');
+      card.style.display = cardType === tab ? 'flex' : 'none';
+    }
+  });
 }
 
 function trade(symbol, action) {
